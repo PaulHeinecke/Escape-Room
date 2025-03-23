@@ -3,13 +3,18 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Escape Room: Prof. Kalvinius Wärmelehre</title>  
+    <title>Escape Room: Vorlage für Lehrkräfte</title>  
+    <script src="https://cdn.tailwindcss.com"></script>  
     <style>  
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Roboto:wght@300;400;500;700&display=swap');  
+        
         body {  
-            font-family: Arial, sans-serif;  
+            font-family: 'Roboto', sans-serif;  
             background-color: #f0f2f5;  
-            margin: 0;  
-            padding: 0;  
+        }  
+        
+        .font-typewriter {  
+            font-family: 'Special Elite', cursive;  
         }  
         
         .professor-note {  
@@ -50,12 +55,25 @@
             padding: 0.5rem 1rem;  
             border-radius: 0.375rem;  
             transition: all 0.2s;  
-            border: none;  
-            cursor: pointer;  
         }  
         
         .hint-button:hover {  
             background-color: #4338ca;  
+        }  
+        
+        .progress-container {  
+            height: 8px;  
+            background-color: #e5e7eb;  
+            border-radius: 4px;  
+            margin-bottom: 1rem;  
+        }  
+        
+        .progress-bar {  
+            height: 100%;  
+            background-color: #4f46e5;  
+            border-radius: 4px;  
+            width: 0%;  
+            transition: width 0.3s ease;  
         }  
         
         .timer-display {  
@@ -67,155 +85,523 @@
             border-radius: 0.5rem;  
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
             z-index: 100;  
-        }  
-        
-        header {  
-            background-color: #4f46e5;  
-            color: white;  
-            padding: 1rem;  
-            text-align: center;  
-        }  
-        
-        .container {  
-            max-width: 1200px;  
-            margin: 0 auto;  
-            padding: 1rem;  
-        }  
-        
-        button {  
-            background-color: #4f46e5;  
-            color: white;  
-            border: none;  
-            padding: 0.5rem 1rem;  
-            border-radius: 0.375rem;  
-            cursor: pointer;  
-        }  
-        
-        button.green {  
-            background-color: #10b981;  
-        }  
-        
-        button:hover {  
-            opacity: 0.9;  
-        }  
-        
-        input {  
-            padding: 0.5rem;  
-            border: 1px solid #ccc;  
-            border-radius: 0.375rem;  
-            margin-bottom: 1rem;  
-        }  
-        
-        .feedback-success {  
-            background-color: #d1fae5;  
-            color: #065f46;  
-            padding: 0.5rem;  
-            border-radius: 0.375rem;  
-            margin-top: 1rem;  
-        }  
-        
-        .feedback-error {  
-            background-color: #fee2e2;  
-            color: #b91c1c;  
-            padding: 0.5rem;  
-            border-radius: 0.375rem;  
-            margin-top: 1rem;  
+            display: none;  
         }  
     </style>  
 </head>  
-<body>  
+<body class="min-h-screen">  
     <!-- Fixed Timer Display -->  
-    <div id="timer-display" class="timer-display hidden">  
-        <span>Zeit:</span>  
+    <div id="timer-display" class="timer-display">  
+        <span class="text-sm font-bold">Zeit:</span>  
         <div id="timer" class="timer">80:00</div>  
     </div>  
     
     <!-- Header -->  
-    <header>  
-        <h1>Das Geheimnis des verrückten Thermodynamikers</h1>  
-        <h2>Prof. Kalvinius Wärmelehre</h2>  
+    <header class="bg-indigo-800 text-white p-4">  
+        <div class="container mx-auto">  
+            <h1 class="text-3xl md:text-4xl font-bold font-typewriter text-center">  
+                Escape Room Vorlage  
+            </h1>  
+            <h2 class="text-xl text-center mt-2">Anpassbar für Lehrkräfte</h2>  
+        </div>  
     </header>  
     
     <!-- Main Content -->  
-    <main class="container">  
+    <main class="container mx-auto p-4 md:p-8">  
         <!-- Introduction Section -->  
-        <section id="intro" class="puzzle-container">  
-            <h2>Willkommen zum Escape Room!</h2>  
-            
-            <div class="professor-note">  
-                <p>"Meine experimentelle Kühlanlage ist außer Kontrolle geraten! Ihr müsst mir helfen, sie zu stabilisieren, bevor es zu spät ist!   
-                Löst die Rätsel in meinem Labor und findet den Code, um die Katastrophe abzuwenden!" - Prof. Kalvinius</p>  
-            </div>  
-            
-            <p>Ihr habt <strong>80 Minuten</strong> Zeit, um den Escape Room zu lösen. Bei jedem Hinweis werden euch <strong>5 Minuten</strong> von eurer Zeit abgezogen!</p>  
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">  
-                <div>  
-                    <h3>Verbleibende Zeit:</h3>  
-                    <div id="intro-timer" class="timer">80:00</div>  
+        <section id="intro" class="mb-8">  
+            <div class="bg-white rounded-lg shadow-md p-6">  
+                <h2 class="text-2xl font-bold mb-4 text-indigo-800">Willkommen zum Escape Room!</h2>  
+                
+                <div class="professor-note font-typewriter mb-6">  
+                    <p>"Hier kommt die Einführungsgeschichte. Erklären Sie den Schülerinnen und Schülern, worum es geht und was ihre Aufgabe ist!" - Lehrkraft</p>  
                 </div>  
-                <button id="start-game" class="green">Spiel starten</button>  
+                
+                <p class="mb-4">Ihr habt <span class="font-bold">80 Minuten</span> Zeit, um den Escape Room zu lösen. Bei jedem Hinweis werden euch <span class="font-bold">5 Minuten</span> von eurer Zeit abgezogen!</p>  
+                
+                <div class="flex justify-between items-center mt-6">  
+                    <div>  
+                        <h3 class="font-bold text-lg">Verbleibende Zeit:</h3>  
+                        <div id="intro-timer" class="timer">80:00</div>  
+                    </div>  
+                    <button id="start-game" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">  
+                        Spiel starten  
+                    </button>  
+                </div>  
+            </div>  
+        </section>  
+        
+        <!-- Game Progress -->  
+        <section id="progress-section" class="mb-8 hidden">  
+            <div class="bg-white rounded-lg shadow-md p-6">  
+                <h3 class="font-bold text-lg mb-2">Fortschritt:</h3>  
+                <div class="progress-container">  
+                    <div id="progress-bar" class="progress-bar"></div>  
+                </div>  
+                <div class="flex justify-between text-sm">  
+                    <span>Start</span>  
+                    <span>Rätsel 1</span>  
+                    <span>Rätsel 2</span>  
+                    <span>Rätsel 3</span>  
+                    <span>Rätsel 4</span>  
+                    <span>Ende</span>  
+                </div>  
             </div>  
         </section>  
         
         <!-- Puzzle 1 -->  
         <section id="puzzle1" class="puzzle-container hidden">  
-            <h2>Rätsel 1: Die geheime Formel</h2>  
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Rätsel 1: Titel des ersten Rätsels</h2>  
             
-            <div class="professor-note">  
-                <p>Die verschlüsselte Nachricht von Professor Kelvinius:</p>  
-                <p>Die richtige Reihenfolge ist: Normale Körpertemperatur, Temperatur eines kalten Kühlschranks, Siedepunkt von Wasser, Temperatur, bei der Celsius und Fahrenheit übereinstimmen.</p>  
+            <div class="professor-note font-typewriter">  
+                <p>Die Aufgabenstellung für das erste Rätsel:</p>  
+                <p class="mt-2">Detaillierte Beschreibung des Rätsels...</p>  
             </div>  
             
-            <div>  
-                <h3>Berechne folgende Temperaturen:</h3>  
-                <ul>  
-                    <li>37°C in Kelvin = ?</li>  
-                    <li>5°C in Fahrenheit = ?</li>  
-                    <li>373,15 K in Celsius = ?</li>  
-                    <li>-40°F in Celsius = ?</li>  
+            <div class="mt-6">  
+                <h3 class="font-bold text-lg">Unteraufgabe:</h3>  
+                <ul class="list-disc pl-6 mt-2 space-y-2">  
+                    <li>Aufgabe 1</li>  
+                    <li>Aufgabe 2</li>  
+                    <li>Aufgabe 3</li>  
+                    <li>Aufgabe 4</li>  
                 </ul>  
             </div>  
             
-            <div>  
-                <p><strong>Ordnet die Ergebnisse in der richtigen Reihenfolge und verwendet die erste Ziffer jedes Ergebnisses, um den Code zu knacken.</strong></p>  
+            <div class="mt-6">  
+                <p class="font-bold">Anleitung zur Lösungseingabe...</p>  
             </div>  
             
-            <div>  
-                <label><strong>Gib den 4-stelligen Code ein:</strong></label>  
-                <input type="text" id="puzzle1-input" maxlength="4" class="code-input" style="width: 100%" placeholder="Code eingeben">  
+            <div class="mt-6">  
+                <label class="block font-bold mb-2">Gib den Code ein:</label>  
+                <input type="text" id="puzzle1-input" maxlength="4" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Code eingeben">  
                 
-                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">  
+                <div class="flex mt-4 justify-between">  
                     <div>  
                         <button id="hint1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
-                        <button id="hint1-2-button" class="hint-button hidden">Hinweis 2 (-5 Min.)</button>  
-                        <button id="hint1-3-button" class="hint-button hidden">Hinweis 3 (-5 Min.)</button>  
+                        <button id="hint1-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>  
+                        <button id="hint1-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>  
                     </div>  
-                    <button id="submit1-button">Prüfen</button>  
+                    <button id="submit1-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                        Prüfen  
+                    </button>  
                 </div>  
                 
-                <div id="hint1-1-container" class="hidden" style="margin-top: 1rem; padding: 1rem; background-color: #e0f2fe; border-radius: 0.375rem;">  
-                    <h4>Hinweis 1:</h4>  
-                    <p>Schaut euch das Whiteboard im Raum an! Dort findet ihr alle Umrechnungsformeln für die verschiedenen Temperatureinheiten.</p>  
+                <div id="hint1-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                    <h4 class="font-bold">Hinweis 1:</h4>  
+                    <p>Erster Hinweis zum Rätsel...</p>  
                 </div>  
                 
-                <div id="hint1-2-container" class="hidden" style="margin-top: 1rem; padding: 1rem; background-color: #e0f2fe; border-radius: 0.375rem;">  
-                    <h4>Hinweis 2:</h4>  
-                    <p>Auf dem Whiteboard stehen die Formeln mit Beispielen:</p>  
-                    <ul>  
-                        <li>Celsius zu Kelvin: K = °C + 273,15 (Beispiel: 20°C = 293,15 K)</li>  
-                        <li>Celsius zu Fahrenheit: °F = (°C × 9/5) + 32 (Beispiel: 20°C = 68°F)</li>  
-                        <li>Kelvin zu Celsius: °C = K - 273,15 (Beispiel: 293,15 K = 20°C)</li>  
-                        <li>Fahrenheit zu Celsius: °C = (°F - 32) × 5/9 (Beispiel: 68°F = 20°C)</li>  
-                    </ul>  
+                <div id="hint1-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                    <h4 class="font-bold">Hinweis 2:</h4>  
+                    <p>Zweiter Hinweis zum Rätsel...</p>  
                 </div>  
                 
-                <div id="hint1-3-container" class="hidden" style="margin-top: 1rem; padding: 1rem; background-color: #e0f2fe; border-radius: 0.375rem;">  
-                    <h4>Hinweis 3:</h4>  
-                    <p>Die Reihenfolge laut Aufgabe ist: Körpertemperatur (37°C), Kühlschrank (5°C), Siedepunkt von Wasser (373,15 K), Temperatur, bei der Celsius und Fahrenheit übereinstimmen (-40°F). Denkt an die ersten Ziffern jedes Ergebnisses!</p>  
+                <div id="hint1-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                    <h4 class="font-bold">Hinweis 3:</h4>  
+                    <p>Dritter Hinweis zum Rätsel...</p>  
                 </div>  
                 
-                <div id="feedback1" class="hidden" style="margin-top: 1rem;"></div>  
+                <div id="feedback1" class="hidden mt-4 p-3 rounded-md"></div>  
+            </div>  
+        </section>  
+        
+        <!-- Puzzle 2 -->  
+        <section id="puzzle2" class="puzzle-container hidden">  
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Rätsel 2: Titel des zweiten Rätsels</h2>  
+            
+            <div class="professor-note font-typewriter">  
+                <p>Die Aufgabenstellung für das zweite Rätsel:</p>  
+                <p class="mt-2">Detaillierte Beschreibung des Rätsels...</p>  
+            </div>  
+            
+            <!-- Puzzle 2 - Part 1 -->  
+            <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">  
+                <h3 class="font-bold text-lg mb-2">Teil 1: Titel des ersten Teils</h3>  
+                <p>Beschreibung des ersten Teils...</p>  
+                
+                <div class="mt-4">  
+                    <label class="block font-bold mb-2">Gib die Lösung für Teil 1 ein:</label>  
+                    <input type="text" id="puzzle2-part1-input" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Lösung eingeben">  
+                    
+                    <div class="flex mt-4 justify-between">  
+                        <div>  
+                            <button id="hint2-1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
+                            <button id="hint2-1-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>  
+                        </div>  
+                        <button id="submit2-part1-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                            Prüfen  
+                        </button>  
+                    </div>  
+                    
+                    <div id="hint2-1-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 1:</h4>  
+                        <p>Erster Hinweis zu Teil 1...</p>  
+                    </div>  
+                    
+                    <div id="hint2-1-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 2:</h4>  
+                        <p>Zweiter Hinweis zu Teil 1...</p>  
+                    </div>  
+                    
+                    <div id="feedback2-part1" class="hidden mt-4 p-3 rounded-md"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Puzzle 2 - Part 2 -->  
+            <div id="puzzle2-part2-container" class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 hidden">  
+                <h3 class="font-bold text-lg mb-2">Teil 2: Titel des zweiten Teils</h3>  
+                <p>Beschreibung des zweiten Teils...</p>  
+                
+                <div class="mt-4">  
+                    <label class="block font-bold mb-2">Gib die Lösung für Teil 2 ein:</label>  
+                    <input type="text" id="puzzle2-part2-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Lösung eingeben">  
+                    
+                    <div class="flex mt-4 justify-between">  
+                        <div>  
+                            <button id="hint2-2-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
+                            <button id="hint2-2-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>  
+                        </div>  
+                        <button id="submit2-part2-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                            Prüfen  
+                        </button>  
+                    </div>  
+                    
+                    <div id="hint2-2-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 1:</h4>  
+                        <p>Erster Hinweis zu Teil 2...</p>  
+                    </div>  
+                    
+                    <div id="hint2-2-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 2:</h4>  
+                        <p>Zweiter Hinweis zu Teil 2...</p>  
+                    </div>  
+                    
+                    <div id="feedback2-part2" class="hidden mt-4 p-3 rounded-md"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Puzzle 2 - Final Input -->  
+            <div id="puzzle2-final-container" class="mt-6 hidden">  
+                <div class="p-4 border-2 border-indigo-200 rounded-lg bg-indigo-50">  
+                    <h3 class="font-bold text-lg mb-2 text-indigo-800">Gesamtlösung für Rätsel 2</h3>  
+                    <p>Kombiniere die Ergebnisse aller Teile...</p>  
+                    
+                    <div class="mt-4">  
+                        <label class="block font-bold mb-2">Gib die Gesamtlösung ein:</label>  
+                        <input type="text" id="puzzle2-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Gesamtlösung eingeben">  
+                        
+                        <div class="flex mt-4 justify-end">  
+                            <button id="submit2-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                                Prüfen  
+                            </button>  
+                        </div>  
+                        
+                        <div id="feedback2" class="hidden mt-4 p-3 rounded-md"></div>  
+                    </div>  
+                </div>  
+            </div>  
+        </section>  
+        
+        <!-- Puzzle 3 -->  
+        <section id="puzzle3" class="puzzle-container hidden">  
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Rätsel 3: Titel des dritten Rätsels</h2>  
+            
+            <div class="professor-note font-typewriter">  
+                <p>Die Aufgabenstellung für das dritte Rätsel:</p>  
+                <p class="mt-2">Detaillierte Beschreibung des Rätsels...</p>  
+            </div>  
+            
+            <!-- Puzzle 3 - Part 1 -->  
+            <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">  
+                <h3 class="font-bold text-lg">Teil 1: Titel des ersten Teils</h3>  
+                <p>Beschreibung des ersten Teils...</p>  
+                
+                <div class="mt-4">  
+                    <label class="block font-bold mb-2">Gib die Lösung für Teil 1 ein:</label>  
+                    <input type="text" id="puzzle3-part1-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Lösung eingeben">  
+                    
+                    <div class="flex mt-4 justify-between">  
+                        <div>  
+                            <button id="hint3-1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
+                            <button id="hint3-1-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>  
+                            <button id="hint3-1-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>  
+                        </div>  
+                        <button id="submit3-part1-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                            Prüfen  
+                        </button>  
+                    </div>  
+                    
+                    <div id="hint3-1-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 1:</h4>  
+                        <p>Erster Hinweis zu Teil 1...</p>  
+                    </div>  
+                    
+                    <div id="hint3-1-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 2:</h4>  
+                        <p>Zweiter Hinweis zu Teil 1...</p>  
+                    </div>  
+                    
+                    <div id="hint3-1-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 3:</h4>  
+                        <p>Dritter Hinweis zu Teil 1...</p>  
+                    </div>  
+                    
+                    <div id="feedback3-part1" class="hidden mt-4 p-3 rounded-md"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Puzzle 3 - Part 2 -->  
+            <div id="puzzle3-part2-container" class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 hidden">  
+                <h3 class="font-bold text-lg">Teil 2: Titel des zweiten Teils</h3>  
+                <p>Beschreibung des zweiten Teils...</p>  
+                
+                <div class="mt-4">  
+                    <label class="block font-bold mb-2">Gib die Lösung für Teil 2 ein:</label>  
+                    <input type="text" id="puzzle3-part2-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Lösung eingeben">  
+                    
+                    <div class="flex mt-4 justify-between">  
+                        <div>  
+                            <button id="hint3-2-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
+                            <button id="hint3-2-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>  
+                        </div>  
+                        <button id="submit3-part2-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                            Prüfen  
+                        </button>  
+                    </div>  
+                    
+                    <div id="hint3-2-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 1:</h4>  
+                        <p>Erster Hinweis zu Teil 2...</p>  
+                    </div>  
+                    
+                    <div id="hint3-2-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 2:</h4>  
+                        <p>Zweiter Hinweis zu Teil 2...</p>  
+                    </div>  
+                    
+                    <div id="feedback3-part2" class="hidden mt-4 p-3 rounded-md"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Puzzle 3 - Final Input -->  
+            <div id="puzzle3-final-container" class="mt-6 hidden">  
+                <div class="p-4 border-2 border-indigo-200 rounded-lg bg-indigo-50">  
+                    <h3 class="font-bold text-lg mb-2 text-indigo-800">Gesamtlösung für Rätsel 3</h3>  
+                    <p>Kombiniere die Ergebnisse beider Teile...</p>  
+                    
+                    <div class="mt-4">  
+                        <label class="block font-bold mb-2">Gib die Gesamtlösung ein:</label>  
+                        <input type="text" id="puzzle3-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Gesamtlösung eingeben">  
+                        
+                        <div class="flex mt-4 justify-end">  
+                            <button id="submit3-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                                Prüfen  
+                            </button>  
+                        </div>  
+                        
+                        <div id="feedback3" class="hidden mt-4 p-3 rounded-md"></div>  
+                    </div>  
+                </div>  
+            </div>  
+        </section>  
+        
+        <!-- Puzzle 4 -->  
+        <section id="puzzle4" class="puzzle-container hidden">  
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Rätsel 4: Titel des vierten Rätsels</h2>  
+            
+            <div class="professor-note font-typewriter">  
+                <p>Die Aufgabenstellung für das vierte Rätsel:</p>  
+                <p class="mt-2">Detaillierte Beschreibung des Rätsels...</p>  
+            </div>  
+            
+            <!-- Puzzle 4 - Part 1 -->  
+            <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">  
+                <h3 class="font-bold text-lg">Teil 1: Titel des ersten Teils</h3>  
+                <p>Beschreibung des ersten Teils...</p>  
+                
+                <div class="mt-4">  
+                    <label class="block font-bold mb-2">Gib die Lösung für Teil 1 ein:</label>  
+                    <input type="text" id="puzzle4-part1-input" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Lösung eingeben">  
+                    
+                    <div class="flex mt-4 justify-between">  
+                        <div>  
+                            <button id="hint4-1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
+                            <button id="hint4-1-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>  
+                            <button id="hint4-1-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>  
+                        </div>  
+                        <button id="submit4-part1-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                            Prüfen  
+                        </button>  
+                    </div>  
+                    
+                    <div id="hint4-1-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 1:</h4>  
+                        <p>Erster Hinweis zu Teil 1...</p>  
+                    </div>  
+                    
+                    <div id="hint4-1-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 2:</h4>  
+                        <p>Zweiter Hinweis zu Teil 1...</p>  
+                    </div>  
+                    
+                    <div id="hint4-1-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 3:</h4>  
+                        <p>Dritter Hinweis zu Teil 1...</p>  
+                    </div>  
+                    
+                    <div id="feedback4-part1" class="hidden mt-4 p-3 rounded-md"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Puzzle 4 - Part 2 -->  
+            <div id="puzzle4-part2-container" class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 hidden">  
+                <h3 class="font-bold text-lg">Teil 2: Titel des zweiten Teils</h3>  
+                <p>Beschreibung des zweiten Teils...</p>  
+                
+                <div class="mt-4">  
+                    <label class="block font-bold mb-2">Gib die Lösung für Teil 2 ein:</label>  
+                    <input type="text" id="puzzle4-part2-input" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Lösung eingeben">  
+                    
+                    <div class="flex mt-4 justify-between">  
+                        <div>  
+                            <button id="hint4-2-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
+                            <button id="hint4-2-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>  
+                            <button id="hint4-2-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>  
+                        </div>  
+                        <button id="submit4-part2-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                            Prüfen  
+                        </button>  
+                    </div>  
+                    
+                    <div id="hint4-2-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 1:</h4>  
+                        <p>Erster Hinweis zu Teil 2...</p>  
+                    </div>  
+                    
+                    <div id="hint4-2-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 2:</h4>  
+                        <p>Zweiter Hinweis zu Teil 2...</p>  
+                    </div>  
+                    
+                    <div id="hint4-2-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                        <h4 class="font-bold">Hinweis 3:</h4>  
+                        <p>Dritter Hinweis zu Teil 2...</p>  
+                    </div>  
+                    
+                    <div id="feedback4-part2" class="hidden mt-4 p-3 rounded-md"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Puzzle 4 - Final Input -->  
+            <div id="puzzle4-final-container" class="mt-6 hidden">  
+                <div class="p-4 border-2 border-indigo-200 rounded-lg bg-indigo-50">  
+                    <h3 class="font-bold text-lg mb-2 text-indigo-800">Gesamtlösung für Rätsel 4</h3>  
+                    <p>Kombiniere die Ergebnisse beider Teile...</p>  
+                    
+                    <div class="mt-4">  
+                        <label class="block font-bold mb-2">Gib die Gesamtlösung ein:</label>  
+                        <input type="text" id="puzzle4-input" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Gesamtlösung eingeben">  
+                        
+                        <div class="flex mt-4 justify-end">  
+                            <button id="submit4-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                                Prüfen  
+                            </button>  
+                        </div>  
+                        
+                        <div id="feedback4" class="hidden mt-4 p-3 rounded-md"></div>  
+                    </div>  
+                </div>  
+            </div>  
+        </section>  
+        
+        <!-- Final Puzzle -->  
+        <section id="final-puzzle" class="puzzle-container hidden">  
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Finales Rätsel: Die letzte Herausforderung</h2>  
+            
+            <div class="professor-note font-typewriter">  
+                <p>Die Aufgabenstellung für das finale Rätsel:</p>  
+                <p class="mt-2">Detaillierte Beschreibung des Rätsels...</p>  
+            </div>  
+            
+            <div class="mt-6">  
+                <h3 class="font-bold text-lg">Löst das finale Rätsel:</h3>  
+                <ol class="list-decimal pl-6 mt-2 space-y-2">  
+                    <li>Aufgabe 1</li>  
+                    <li>Aufgabe 2</li>  
+                    <li>Aufgabe 3</li>  
+                    <li>Aufgabe 4</li>  
+                </ol>  
+            </div>  
+            
+            <div class="mt-6">  
+                <label class="block font-bold mb-2">Gib den numerischen Teil der Lösung ein:</label>  
+                <input type="text" id="final-input-numeric" maxlength="3" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Numerische Lösung eingeben">  
+                
+                <div class="mt-4">  
+                    <label class="block font-bold mb-2">Gib das Lösungswort ein:</label>  
+                    <input type="text" id="final-input-word" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Lösungswort eingeben">  
+                </div>  
+                
+                <div class="flex mt-4 justify-between">  
+                    <div>  
+                        <button id="hint-final-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
+                        <button id="hint-final-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>  
+                        <button id="hint-final-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>  
+                    </div>  
+                    <button id="submit-final-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">  
+                        Prüfen  
+                    </button>  
+                </div>  
+                
+                <div id="hint-final-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                    <h4 class="font-bold">Hinweis 1:</h4>  
+                    <p>Erster Hinweis zum finalen Rätsel...</p>  
+                </div>  
+                
+                <div id="hint-final-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                    <h4 class="font-bold">Hinweis 2:</h4>  
+                    <p>Zweiter Hinweis zum finalen Rätsel...</p>  
+                </div>  
+                
+                <div id="hint-final-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">  
+                    <h4 class="font-bold">Hinweis 3:</h4>  
+                    <p>Dritter Hinweis zum finalen Rätsel...</p>  
+                </div>  
+                
+                <div id="feedback-final" class="hidden mt-4 p-3 rounded-md"></div>  
+            </div>  
+        </section>  
+        
+        <!-- Success Screen -->  
+        <section id="success-screen" class="hidden">  
+            <div class="bg-green-50 rounded-lg shadow-md p-8 text-center">  
+                <h2 class="text-3xl font-bold mb-6 text-green-800">Herzlichen Glückwunsch!</h2>  
+                
+                <div class="mb-6">  
+                    <p class="text-xl mb-4">Ihr habt den Escape Room erfolgreich gelöst!</p>  
+                    <p class="text-lg">Verbleibende Zeit: <span id="time-remaining" class="font-bold"></span></p>  
+                </div>  
+                
+                <button id="restart-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-200">  
+                    Neu starten  
+                </button>  
+            </div>  
+        </section>  
+        
+        <!-- Failure Screen -->  
+        <section id="failure-screen" class="hidden">  
+            <div class="bg-red-50 rounded-lg shadow-md p-8 text-center">  
+                <h2 class="text-3xl font-bold mb-6 text-red-800">Zeit abgelaufen!</h2>  
+                
+                <div class="mb-6">  
+                    <p class="text-xl mb-4">Leider habt ihr es nicht rechtzeitig geschafft, den Escape Room zu lösen.</p>  
+                    <p class="text-lg">Versucht es noch einmal!</p>  
+                </div>  
+                
+                <button id="restart-button-fail" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-200">  
+                    Neu starten  
+                </button>  
             </div>  
         </section>  
     </main>  
@@ -224,41 +610,145 @@
         // Game Configuration  
         const TOTAL_TIME = 80 * 60; // 80 minutes in seconds  
         const HINT_PENALTY = 5 * 60; // 5 minutes in seconds  
+        const SOLUTIONS = {  
+            puzzle1: "1234",  
+            puzzle2Part1: "12345",  
+            puzzle2Part2: "ABCDE",  
+            puzzle2Part3: "X",  
+            puzzle2Part4: "WXYZ",  
+            puzzle2: "12345ABCDEXWXYZ",  
+            puzzle3Part1: "ABCDEFG",  
+            puzzle3Part2: "HIJKLMN",  
+            puzzle3: "ABCDEFGHIJKLMN",  
+            puzzle4Part1: "12",  
+            puzzle4Part2: "34",  
+            puzzle4: "1234",  
+            finalNumeric: "567",  
+            finalWord: "FINAL"  
+        };  
         
         // Game State  
         let gameStarted = false;  
+        let currentPuzzle = 0;  
         let remainingTime = TOTAL_TIME;  
         let timerInterval;  
-        let currentPuzzle = 0;  
+        let hintsUsed = 0;  
         
         // DOM Elements  
-        const startButton = document.getElementById('start-game');  
-        const timerDisplay = document.getElementById('timer-display');  
+        const sections = {  
+            intro: document.getElementById('intro'),  
+            progress: document.getElementById('progress-section'),  
+            puzzle1: document.getElementById('puzzle1'),  
+            puzzle2: document.getElementById('puzzle2'),  
+            puzzle3: document.getElementById('puzzle3'),  
+            puzzle4: document.getElementById('puzzle4'),  
+            finalPuzzle: document.getElementById('final-puzzle'),  
+            success: document.getElementById('success-screen'),  
+            failure: document.getElementById('failure-screen')  
+        };  
+        
+        const inputs = {  
+            puzzle1: document.getElementById('puzzle1-input'),  
+            puzzle2Part1: document.getElementById('puzzle2-part1-input'),  
+            puzzle2Part2: document.getElementById('puzzle2-part2-input'),  
+            puzzle2Part3: document.getElementById('puzzle2-part3-input'),  
+            puzzle2Part4: document.getElementById('puzzle2-part4-input'),  
+            puzzle2: document.getElementById('puzzle2-input'),  
+            puzzle3Part1: document.getElementById('puzzle3-part1-input'),  
+            puzzle3Part2: document.getElementById('puzzle3-part2-input'),  
+            puzzle3: document.getElementById('puzzle3-input'),  
+            puzzle4Part1: document.getElementById('puzzle4-part1-input'),  
+            puzzle4Part2: document.getElementById('puzzle4-part2-input'),  
+            puzzle4: document.getElementById('puzzle4-input'),  
+            finalNumeric: document.getElementById('final-input-numeric'),  
+            finalWord: document.getElementById('final-input-word')  
+        };  
+        
+        const buttons = {  
+            start: document.getElementById('start-game'),  
+            submit1: document.getElementById('submit1-button'),  
+            submit2Part1: document.getElementById('submit2-part1-button'),  
+            submit2Part2: document.getElementById('submit2-part2-button'),  
+            submit2Part3: document.getElementById('submit2-part3-button'),  
+            submit2Part4: document.getElementById('submit2-part4-button'),  
+            submit2: document.getElementById('submit2-button'),  
+            submit3Part1: document.getElementById('submit3-part1-button'),  
+            submit3Part2: document.getElementById('submit3-part2-button'),  
+            submit3: document.getElementById('submit3-button'),  
+            submit4Part1: document.getElementById('submit4-part1-button'),  
+            submit4Part2: document.getElementById('submit4-part2-button'),  
+            submit4: document.getElementById('submit4-button'),  
+            submitFinal: document.getElementById('submit-final-button'),  
+            hint1_1: document.getElementById('hint1-1-button'),  
+            hint1_2: document.getElementById('hint1-2-button'),  
+            hint1_3: document.getElementById('hint1-3-button'),  
+            hint2_1_1: document.getElementById('hint2-1-1-button'),  
+            hint2_1_2: document.getElementById('hint2-1-2-button'),  
+            hint2_2_1: document.getElementById('hint2-2-1-button'),  
+            hint2_2_2: document.getElementById('hint2-2-2-button'),  
+            hint3_1_1: document.getElementById('hint3-1-1-button'),  
+            hint3_1_2: document.getElementById('hint3-1-2-button'),  
+            hint3_1_3: document.getElementById('hint3-1-3-button'),  
+            hint3_2_1: document.getElementById('hint3-2-1-button'),  
+            hint3_2_2: document.getElementById('hint3-2-2-button'),  
+            hint4_1_1: document.getElementById('hint4-1-1-button'),  
+            hint4_1_2: document.getElementById('hint4-1-2-button'),  
+            hint4_1_3: document.getElementById('hint4-1-3-button'),  
+            hint4_2_1: document.getElementById('hint4-2-1-button'),  
+            hint4_2_2: document.getElementById('hint4-2-2-button'),  
+            hint4_2_3: document.getElementById('hint4-2-3-button'),  
+            hintFinal1: document.getElementById('hint-final-1-button'),  
+            hintFinal2: document.getElementById('hint-final-2-button'),  
+            hintFinal3: document.getElementById('hint-final-3-button'),  
+            restart: document.getElementById('restart-button'),  
+            restartFail: document.getElementById('restart-button-fail')  
+        };  
+        
+        const hintContainers = {  
+            hint1_1: document.getElementById('hint1-1-container'),  
+            hint1_2: document.getElementById('hint1-2-container'),  
+            hint1_3: document.getElementById('hint1-3-container'),  
+            hint2_1_1: document.getElementById('hint2-1-1-container'),  
+            hint2_1_2: document.getElementById('hint2-1-2-container'),  
+            hint2_2_1: document.getElementById('hint2-2-1-container'),  
+            hint2_2_2: document.getElementById('hint2-2-2-container'),  
+            hint3_1_1: document.getElementById('hint3-1-1-container'),  
+            hint3_1_2: document.getElementById('hint3-1-2-container'),  
+            hint3_1_3: document.getElementById('hint3-1-3-container'),  
+            hint3_2_1: document.getElementById('hint3-2-1-container'),  
+            hint3_2_2: document.getElementById('hint3-2-2-container'),  
+            hint4_1_1: document.getElementById('hint4-1-1-container'),  
+            hint4_1_2: document.getElementById('hint4-1-2-container'),  
+            hint4_1_3: document.getElementById('hint4-1-3-container'),  
+            hint4_2_1: document.getElementById('hint4-2-1-container'),  
+            hint4_2_2: document.getElementById('hint4-2-2-container'),  
+            hint4_2_3: document.getElementById('hint4-2-3-container'),  
+            hintFinal1: document.getElementById('hint-final-1-container'),  
+            hintFinal2: document.getElementById('hint-final-2-container'),  
+            hintFinal3: document.getElementById('hint-final-3-container')  
+        };  
+        
+        const feedbacks = {  
+            feedback1: document.getElementById('feedback1'),  
+            feedback2Part1: document.getElementById('feedback2-part1'),  
+            feedback2Part2: document.getElementById('feedback2-part2'),  
+            feedback2Part3: document.getElementById('feedback2-part3'),  
+            feedback2Part4: document.getElementById('feedback2-part4'),  
+            feedback2: document.getElementById('feedback2'),  
+            feedback3Part1: document.getElementById('feedback3-part1'),  
+            feedback3Part2: document.getElementById('feedback3-part2'),  
+            feedback3: document.getElementById('feedback3'),  
+            feedback4Part1: document.getElementById('feedback4-part1'),  
+            feedback4Part2: document.getElementById('feedback4-part2'),  
+            feedback4: document.getElementById('feedback4'),  
+            feedbackFinal: document.getElementById('feedback-final')  
+        };  
+        
         const timer = document.getElementById('timer');  
         const introTimer = document.getElementById('intro-timer');  
-        
-        const introSection = document.getElementById('intro');  
-        const puzzle1Section = document.getElementById('puzzle1');  
-        
-        // Puzzle 1 Elements  
-        const puzzle1Input = document.getElementById('puzzle1-input');  
-        const submit1Button = document.getElementById('submit1-button');  
-        const feedback1 = document.getElementById('feedback1');  
-        
-        // Hint Buttons  
-        const hint1_1Button = document.getElementById('hint1-1-button');  
-        const hint1_2Button = document.getElementById('hint1-2-button');  
-        const hint1_3Button = document.getElementById('hint1-3-button');  
-        
-        // Hint Containers  
-        const hint1_1Container = document.getElementById('hint1-1-container');  
-        const hint1_2Container = document.getElementById('hint1-2-container');  
-        const hint1_3Container = document.getElementById('hint1-3-container');  
-        
-        // Solutions  
-        const SOLUTIONS = {  
-            puzzle1: "3414"  
-        };  
+        const timerDisplay = document.getElementById('timer-display');  
+        const progressBar = document.getElementById('progress-bar');  
+        const timeRemainingDisplay = document.getElementById('time-remaining');  
         
         // Helper Functions  
         function formatTime(seconds) {  
@@ -279,22 +769,17 @@
             introTimer.textContent = formatTime(remainingTime);  
         }  
         
-        function startGame() {  
-            gameStarted = true;  
-            timerInterval = setInterval(updateTimer, 1000);  
-            timerDisplay.classList.remove('hidden');  
+        function showSection(section) {  
+            // Hide all sections  
+            Object.values(sections).forEach(s => s.classList.add('hidden'));  
             
-            // Hide intro, show first puzzle  
-            introSection.classList.add('hidden');  
-            puzzle1Section.classList.remove('hidden');  
-            
-            currentPuzzle = 1;  
+            // Show the requested section  
+            section.classList.remove('hidden');  
         }  
         
-        function showFeedback(element, isCorrect, message) {  
-            element.textContent = message;  
-            element.classList.remove('hidden', 'feedback-success', 'feedback-error');  
-            element.classList.add(isCorrect ? 'feedback-success' : 'feedback-error');  
+        function updateProgress() {  
+            const progressPercentage = (currentPuzzle / 5) * 100;  
+            progressBar.style.width = `${progressPercentage}%`;  
         }  
         
         function applyHintPenalty() {  
@@ -302,46 +787,273 @@
             if (remainingTime < 0) remainingTime = 0;  
             timer.textContent = formatTime(remainingTime);  
             introTimer.textContent = formatTime(remainingTime);  
+            hintsUsed++;  
+        }  
+        
+        function showFeedback(element, isCorrect, message) {  
+            element.textContent = message;  
+            element.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'text-red-700', 'text-green-700');  
+            element.classList.add(isCorrect ? 'bg-green-100' : 'bg-red-100');  
+            element.classList.add(isCorrect ? 'text-green-700' : 'text-red-700');  
+        }  
+        
+        function advanceToPuzzle(puzzleNumber) {  
+            currentPuzzle = puzzleNumber;  
+            updateProgress();  
+            
+            switch(puzzleNumber) {  
+                case 1:  
+                    showSection(sections.puzzle1);  
+                    break;  
+                case 2:  
+                    showSection(sections.puzzle2);  
+                    break;  
+                case 3:  
+                    showSection(sections.puzzle3);  
+                    break;  
+                case 4:  
+                    showSection(sections.puzzle4);  
+                    break;  
+                case 5:  
+                    showSection(sections.finalPuzzle);  
+                    break;  
+                case 6:  
+                    gameOver(true);  
+                    break;  
+            }  
+        }  
+        
+        function gameOver(success) {  
+            clearInterval(timerInterval);  
+            
+            if (success) {  
+                timeRemainingDisplay.textContent = formatTime(remainingTime);  
+                showSection(sections.success);  
+            } else {  
+                showSection(sections.failure);  
+            }  
+        }  
+        
+        function restartGame() {  
+            remainingTime = TOTAL_TIME;  
+            currentPuzzle = 0;  
+            hintsUsed = 0;  
+            gameStarted = false;  
+            
+            // Reset inputs  
+            Object.values(inputs).forEach(input => {  
+                if (input) input.value = '';  
+            });  
+            
+            // Reset feedback  
+            Object.values(feedbacks).forEach(feedback => {  
+                if (feedback) feedback.classList.add('hidden');  
+            });  
+            
+            // Reset hints  
+            Object.values(hintContainers).forEach(container => {  
+                if (container) container.classList.add('hidden');  
+            });  
+            
+            // Reset hint buttons  
+            if (buttons.hint1_2) buttons.hint1_2.classList.add('hidden');  
+            if (buttons.hint1_3) buttons.hint1_3.classList.add('hidden');  
+            if (buttons.hint2_1_2) buttons.hint2_1_2.classList.add('hidden');  
+            if (buttons.hint2_2_2) buttons.hint2_2_2.classList.add('hidden');  
+            if (buttons.hint3_1_2) buttons.hint3_1_2.classList.add('hidden');  
+            if (buttons.hint3_1_3) buttons.hint3_1_3.classList.add('hidden');  
+            if (buttons.hint3_2_2) buttons.hint3_2_2.classList.add('hidden');  
+            if (buttons.hint4_1_2) buttons.hint4_1_2.classList.add('hidden');  
+            if (buttons.hint4_1_3) buttons.hint4_1_3.classList.add('hidden');  
+            if (buttons.hint4_2_2) buttons.hint4_2_2.classList.add('hidden');  
+            if (buttons.hint4_2_3) buttons.hint4_2_3.classList.add('hidden');  
+            if (buttons.hintFinal2) buttons.hintFinal2.classList.add('hidden');  
+            if (buttons.hintFinal3) buttons.hintFinal3.classList.add('hidden');  
+            
+            // Reset part containers  
+            const puzzle2Part2Container = document.getElementById('puzzle2-part2-container');  
+            const puzzle2Part3Container = document.getElementById('puzzle2-part3-container');  
+            const puzzle2Part4Container = document.getElementById('puzzle2-part4-container');  
+            const puzzle2FinalContainer = document.getElementById('puzzle2-final-container');  
+            const puzzle3Part2Container = document.getElementById('puzzle3-part2-container');  
+            const puzzle3FinalContainer = document.getElementById('puzzle3-final-container');  
+            const puzzle4Part2Container = document.getElementById('puzzle4-part2-container');  
+            const puzzle4FinalContainer = document.getElementById('puzzle4-final-container');  
+            
+            if (puzzle2Part2Container) puzzle2Part2Container.classList.add('hidden');  
+            if (puzzle2Part3Container) puzzle2Part3Container.classList.add('hidden');  
+            if (puzzle2Part4Container) puzzle2Part4Container.classList.add('hidden');  
+            if (puzzle2FinalContainer) puzzle2FinalContainer.classList.add('hidden');  
+            if (puzzle3Part2Container) puzzle3Part2Container.classList.add('hidden');  
+            if (puzzle3FinalContainer) puzzle3FinalContainer.classList.add('hidden');  
+            if (puzzle4Part2Container) puzzle4Part2Container.classList.add('hidden');  
+            if (puzzle4FinalContainer) puzzle4FinalContainer.classList.add('hidden');  
+            
+            // Reset timer  
+            timer.textContent = formatTime(remainingTime);  
+            introTimer.textContent = formatTime(remainingTime);  
+            
+            // Reset progress bar  
+            progressBar.style.width = '0%';  
+            
+            // Hide timer display  
+            timerDisplay.style.display = 'none';  
+            
+            // Show intro section  
+            showSection(sections.intro);  
+            sections.progress.classList.add('hidden');  
         }  
         
         // Event Listeners  
-        startButton.addEventListener('click', startGame);  
+        if (buttons.start) {  
+            buttons.start.addEventListener('click', () => {  
+                gameStarted = true;  
+                timerInterval = setInterval(updateTimer, 1000);  
+                timerDisplay.style.display = 'block';  
+                sections.progress.classList.remove('hidden');  
+                advanceToPuzzle(1);  
+            });  
+        }  
         
-        // Puzzle 1 Event Listeners  
-        submit1Button.addEventListener('click', () => {  
-            const input = puzzle1Input.value.trim();  
-            if (input === SOLUTIONS.puzzle1) {  
-                showFeedback(feedback1, true, "Richtig! Der Code ist korrekt.");  
-                // Normally we would advance to the next puzzle here  
-                setTimeout(() => {  
-                    alert("Herzlichen Glückwunsch! Sie haben das erste Rätsel gelöst. In der vollständigen Version würden Sie nun zum nächsten Rätsel weitergeleitet.");  
-                }, 1500);  
-            } else {  
-                showFeedback(feedback1, false, "Leider falsch. Überprüfe die Temperaturumrechnungen und die Reihenfolge.");  
-            }  
-        });  
+        // Puzzle 1  
+        if (buttons.submit1) {  
+            buttons.submit1.addEventListener('click', () => {  
+                const input = inputs.puzzle1.value.trim();  
+                if (input === SOLUTIONS.puzzle1) {  
+                    showFeedback(feedbacks.feedback1, true, "Richtig! Der Code ist korrekt.");  
+                    setTimeout(() => advanceToPuzzle(2), 1500);  
+                } else {  
+                    showFeedback(feedbacks.feedback1, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }  
         
-        // Hint buttons  
-        hint1_1Button.addEventListener('click', () => {  
-            hint1_1Container.classList.remove('hidden');  
-            hint1_2Button.classList.remove('hidden');  
-            applyHintPenalty();  
-        });  
+        // Puzzle 2 - Part 1  
+        if (buttons.submit2Part1) {  
+            buttons.submit2Part1.addEventListener('click', () => {  
+                const input = inputs.puzzle2Part1.value.trim();  
+                if (input === SOLUTIONS.puzzle2Part1) {  
+                    showFeedback(feedbacks.feedback2Part1, true, "Richtig! Die Lösung für Teil 1 ist korrekt.");  
+                    document.getElementById('puzzle2-part2-container').classList.remove('hidden');  
+                } else {  
+                    showFeedback(feedbacks.feedback2Part1, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }  
         
-        hint1_2Button.addEventListener('click', () => {  
-            hint1_2Container.classList.remove('hidden');  
-            hint1_3Button.classList.remove('hidden');  
-            applyHintPenalty();  
-        });  
+        // Puzzle 2 - Part 2  
+        if (buttons.submit2Part2) {  
+            buttons.submit2Part2.addEventListener('click', () => {  
+                const input = inputs.puzzle2Part2.value.trim().toUpperCase();  
+                if (input === SOLUTIONS.puzzle2Part2) {  
+                    showFeedback(feedbacks.feedback2Part2, true, "Richtig! Die Lösung für Teil 2 ist korrekt.");  
+                    document.getElementById('puzzle2-part3-container').classList.remove('hidden');  
+                } else {  
+                    showFeedback(feedbacks.feedback2Part2, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }  
         
-        hint1_3Button.addEventListener('click', () => {  
-            hint1_3Container.classList.remove('hidden');  
-            applyHintPenalty();  
-        });  
+        // Puzzle 2 - Part 3  
+        if (buttons.submit2Part3) {  
+            buttons.submit2Part3.addEventListener('click', () => {  
+                const input = inputs.puzzle2Part3.value.trim().toUpperCase();  
+                if (input === SOLUTIONS.puzzle2Part3) {  
+                    showFeedback(feedbacks.feedback2Part3, true, "Richtig! Die Lösung für Teil 3 ist korrekt.");  
+                    document.getElementById('puzzle2-part4-container').classList.remove('hidden');  
+                } else {  
+                    showFeedback(feedbacks.feedback2Part3, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }  
         
-        // Initialize timer display  
-        timer.textContent = formatTime(remainingTime);  
-        introTimer.textContent = formatTime(remainingTime);  
-    </script>  
-</body>  
-</html>
+        // Puzzle 2 - Part 4  
+        if (buttons.submit2Part4) {  
+            buttons.submit2Part4.addEventListener('click', () => {  
+                const input = inputs.puzzle2Part4.value.trim().toUpperCase();  
+                if (input === SOLUTIONS.puzzle2Part4) {  
+                    showFeedback(feedbacks.feedback2Part4, true, "Richtig! Die Lösung für Teil 4 ist korrekt.");  
+                    document.getElementById('puzzle2-final-container').classList.remove('hidden');  
+                } else {  
+                    showFeedback(feedbacks.feedback2Part4, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }  
+        
+        // Puzzle 2 - Final  
+        if (buttons.submit2) {  
+            buttons.submit2.addEventListener('click', () => {  
+                const input = inputs.puzzle2.value.trim().toUpperCase();  
+                if (input === SOLUTIONS.puzzle2) {  
+                    showFeedback(feedbacks.feedback2, true, "Richtig! Die Gesamtlösung ist korrekt.");  
+                    setTimeout(() => advanceToPuzzle(3), 1500);  
+                } else {  
+                    showFeedback(feedbacks.feedback2, false, "Leider falsch. Kombiniere die Teillösungen korrekt.");  
+                }  
+            });  
+        }  
+        
+        // Puzzle 3 - Part 1  
+        if (buttons.submit3Part1) {  
+            buttons.submit3Part1.addEventListener('click', () => {  
+                const input = inputs.puzzle3Part1.value.trim().toUpperCase();  
+                if (input === SOLUTIONS.puzzle3Part1) {  
+                    showFeedback(feedbacks.feedback3Part1, true, "Richtig! Die Lösung für Teil 1 ist korrekt.");  
+                    document.getElementById('puzzle3-part2-container').classList.remove('hidden');  
+                } else {  
+                    showFeedback(feedbacks.feedback3Part1, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }  
+        
+        // Puzzle 3 - Part 2  
+        if (buttons.submit3Part2) {  
+            buttons.submit3Part2.addEventListener('click', () => {  
+                const input = inputs.puzzle3Part2.value.trim().toUpperCase();  
+                if (input === SOLUTIONS.puzzle3Part2) {  
+                    showFeedback(feedbacks.feedback3Part2, true, "Richtig! Die Lösung für Teil 2 ist korrekt.");  
+                    document.getElementById('puzzle3-final-container').classList.remove('hidden');  
+                } else {  
+                    showFeedback(feedbacks.feedback3Part2, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }  
+        
+        // Puzzle 3 - Final  
+        if (buttons.submit3) {  
+            buttons.submit3.addEventListener('click', () => {  
+                const input = inputs.puzzle3.value.trim().toUpperCase();  
+                if (input === SOLUTIONS.puzzle3) {  
+                    showFeedback(feedbacks.feedback3, true, "Richtig! Die Gesamtlösung ist korrekt.");  
+                    setTimeout(() => advanceToPuzzle(4), 1500);  
+                } else {  
+                    showFeedback(feedbacks.feedback3, false, "Leider falsch. Kombiniere die Teillösungen korrekt.");  
+                }  
+            });  
+        }  
+        
+        // Puzzle 4 - Part 1  
+        if (buttons.submit4Part1) {  
+            buttons.submit4Part1.addEventListener('click', () => {  
+                const input = inputs.puzzle4Part1.value.trim();  
+                if (input === SOLUTIONS.puzzle4Part1) {  
+                    showFeedback(feedbacks.feedback4Part1, true, "Richtig! Die Lösung für Teil 1 ist korrekt.");  
+                    document.getElementById('puzzle4-part2-container').classList.remove('hidden');  
+                } else {  
+                    showFeedback(feedbacks.feedback4Part1, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }  
+        
+        // Puzzle 4 - Part 2  
+        if (buttons.submit4Part2) {  
+            buttons.submit4Part2.addEventListener('click', () => {  
+                const input = inputs.puzzle4Part2.value.trim();  
+                if (input === SOLUTIONS.puzzle4Part2) {  
+                    showFeedback(feedbacks.feedback4Part2, true, "Richtig! Die Lösung für Teil 2 ist korrekt.");  
+                    document.getElementById('puzzle4-final-container').classList.remove('hidden');  
+                } else {  
+                    showFeedback(feedbacks.feedback4Part2, false, "Leider falsch. Versuche es noch einmal.");  
+                }  
+            });  
+        }
