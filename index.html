@@ -1,725 +1,347 @@
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Room: Prof. Kalvinius Wärmelehre</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Roboto:wght@300;400;500;700&display=swap');
+<!DOCTYPE html>  
+<html lang="de">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Escape Room: Prof. Kalvinius Wärmelehre</title>  
+    <style>  
+        body {  
+            font-family: Arial, sans-serif;  
+            background-color: #f0f2f5;  
+            margin: 0;  
+            padding: 0;  
+        }  
         
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f2f5;
-        }
+        .professor-note {  
+            background-color: #fff9e6;  
+            border-left: 4px solid #f0c040;  
+            padding: 1rem;  
+            margin-bottom: 1rem;  
+            font-style: italic;  
+        }  
         
-        .font-typewriter {
-            font-family: 'Special Elite', cursive;
-        }
+        .code-input {  
+            letter-spacing: 0.5em;  
+            text-align: center;  
+            font-weight: bold;  
+        }  
         
-        .professor-note {
-            background-color: #fff9e6;
-            border-left: 4px solid #f0c040;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            font-style: italic;
-        }
+        .hidden {  
+            display: none;  
+        }  
         
-        .code-input {
-            letter-spacing: 0.5em;
-            text-align: center;
-            font-weight: bold;
-        }
+        .timer {  
+            font-family: monospace;  
+            font-size: 1.5rem;  
+            font-weight: bold;  
+        }  
         
-        .hidden {
-            display: none;
-        }
+        .puzzle-container {  
+            background: white;  
+            border-radius: 8px;  
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  
+            padding: 2rem;  
+            margin-bottom: 2rem;  
+        }  
         
-        .timer {
-            font-family: monospace;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
+        .hint-button {  
+            background-color: #4f46e5;  
+            color: white;  
+            padding: 0.5rem 1rem;  
+            border-radius: 0.375rem;  
+            transition: all 0.2s;  
+            border: none;  
+            cursor: pointer;  
+        }  
         
-        .puzzle-container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
+        .hint-button:hover {  
+            background-color: #4338ca;  
+        }  
         
-        .hint-button {
-            background-color: #4f46e5;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            transition: all 0.2s;
-        }
+        .timer-display {  
+            position: fixed;  
+            top: 1rem;  
+            right: 1rem;  
+            background-color: rgba(255, 255, 255, 0.9);  
+            padding: 0.5rem 1rem;  
+            border-radius: 0.5rem;  
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
+            z-index: 100;  
+        }  
         
-        .hint-button:hover {
-            background-color: #4338ca;
-        }
+        header {  
+            background-color: #4f46e5;  
+            color: white;  
+            padding: 1rem;  
+            text-align: center;  
+        }  
         
-        .progress-container {
-            height: 8px;
-            background-color: #e5e7eb;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-        }
+        .container {  
+            max-width: 1200px;  
+            margin: 0 auto;  
+            padding: 1rem;  
+        }  
         
-        .progress-bar {
-            height: 100%;
-            background-color: #4f46e5;
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
+        button {  
+            background-color: #4f46e5;  
+            color: white;  
+            border: none;  
+            padding: 0.5rem 1rem;  
+            border-radius: 0.375rem;  
+            cursor: pointer;  
+        }  
         
-        .timer-display {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            display: none;
-        }
-    </style>
-</head>
-<body class="min-h-screen">
-    <!-- Fixed Timer Display -->
-    <div id="timer-display" class="timer-display">
-        <span class="text-sm font-bold">Zeit:</span>
-        <div id="timer" class="timer">80:00</div>
-    </div>
+        button.green {  
+            background-color: #10b981;  
+        }  
+        
+        button:hover {  
+            opacity: 0.9;  
+        }  
+        
+        input {  
+            padding: 0.5rem;  
+            border: 1px solid #ccc;  
+            border-radius: 0.375rem;  
+            margin-bottom: 1rem;  
+        }  
+        
+        .feedback-success {  
+            background-color: #d1fae5;  
+            color: #065f46;  
+            padding: 0.5rem;  
+            border-radius: 0.375rem;  
+            margin-top: 1rem;  
+        }  
+        
+        .feedback-error {  
+            background-color: #fee2e2;  
+            color: #b91c1c;  
+            padding: 0.5rem;  
+            border-radius: 0.375rem;  
+            margin-top: 1rem;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <!-- Fixed Timer Display -->  
+    <div id="timer-display" class="timer-display hidden">  
+        <span>Zeit:</span>  
+        <div id="timer" class="timer">80:00</div>  
+    </div>  
     
-    <!-- Header -->
-    <header class="bg-indigo-800 text-white p-4">
-        <div class="container mx-auto">
-            <h1 class="text-3xl md:text-4xl font-bold font-typewriter text-center">
-                Das Geheimnis des verrückten Thermodynamikers
-            </h1>
-            <h2 class="text-xl text-center mt-2">Prof. Kalvinius Wärmelehre</h2>
-        </div>
-    </header>
+    <!-- Header -->  
+    <header>  
+        <h1>Das Geheimnis des verrückten Thermodynamikers</h1>  
+        <h2>Prof. Kalvinius Wärmelehre</h2>  
+    </header>  
     
-    <!-- Main Content -->
-    <main class="container mx-auto p-4 md:p-8">
-        <!-- Introduction Section -->
-        <section id="intro" class="mb-8">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-2xl font-bold mb-4 text-indigo-800">Willkommen zum Escape Room!</h2>
-                
-                <div class="professor-note font-typewriter mb-6">
-                    <p>"Meine experimentelle Kühlanlage ist außer Kontrolle geraten! Ihr müsst mir helfen, sie zu stabilisieren, bevor es zu spät ist! 
-                    Löst die Rätsel in meinem Labor und findet den Code, um die Katastrophe abzuwenden!" - Prof. Kalvinius</p>
-                </div>
-                
-                <p class="mb-4">Ihr habt <span class="font-bold">80 Minuten</span> Zeit, um den Escape Room zu lösen. Bei jedem Hinweis werden euch <span class="font-bold">5 Minuten</span> von eurer Zeit abgezogen!</p>
-                
-                <div class="flex justify-between items-center mt-6">
-                    <div>
-                        <h3 class="font-bold text-lg">Verbleibende Zeit:</h3>
-                        <div id="intro-timer" class="timer">80:00</div>
-                    </div>
-                    <button id="start-game" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
-                        Spiel starten
-                    </button>
-                </div>
-            </div>
-        </section>
+    <!-- Main Content -->  
+    <main class="container">  
+        <!-- Introduction Section -->  
+        <section id="intro" class="puzzle-container">  
+            <h2>Willkommen zum Escape Room!</h2>  
+            
+            <div class="professor-note">  
+                <p>"Meine experimentelle Kühlanlage ist außer Kontrolle geraten! Ihr müsst mir helfen, sie zu stabilisieren, bevor es zu spät ist!   
+                Löst die Rätsel in meinem Labor und findet den Code, um die Katastrophe abzuwenden!" - Prof. Kalvinius</p>  
+            </div>  
+            
+            <p>Ihr habt <strong>80 Minuten</strong> Zeit, um den Escape Room zu lösen. Bei jedem Hinweis werden euch <strong>5 Minuten</strong> von eurer Zeit abgezogen!</p>  
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">  
+                <div>  
+                    <h3>Verbleibende Zeit:</h3>  
+                    <div id="intro-timer" class="timer">80:00</div>  
+                </div>  
+                <button id="start-game" class="green">Spiel starten</button>  
+            </div>  
+        </section>  
         
-        <!-- Game Progress -->
-        <section id="progress-section" class="mb-8 hidden">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h3 class="font-bold text-lg mb-2">Fortschritt:</h3>
-                <div class="progress-container">
-                    <div id="progress-bar" class="progress-bar"></div>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <span>Start</span>
-                    <span>Rätsel 1</span>
-                    <span>Rätsel 2</span>
-                    <span>Rätsel 3</span>
-                    <span>Rätsel 4</span>
-                    <span>Ende</span>
-                </div>
-            </div>
-        </section>
+        <!-- Puzzle 1 -->  
+        <section id="puzzle1" class="puzzle-container hidden">  
+            <h2>Rätsel 1: Die geheime Formel</h2>  
+            
+            <div class="professor-note">  
+                <p>Die verschlüsselte Nachricht von Professor Kelvinius:</p>  
+                <p>Die richtige Reihenfolge ist: Normale Körpertemperatur, Temperatur eines kalten Kühlschranks, Siedepunkt von Wasser, Temperatur, bei der Celsius und Fahrenheit übereinstimmen.</p>  
+            </div>  
+            
+            <div>  
+                <h3>Berechne folgende Temperaturen:</h3>  
+                <ul>  
+                    <li>37°C in Kelvin = ?</li>  
+                    <li>5°C in Fahrenheit = ?</li>  
+                    <li>373,15 K in Celsius = ?</li>  
+                    <li>-40°F in Celsius = ?</li>  
+                </ul>  
+            </div>  
+            
+            <div>  
+                <p><strong>Ordnet die Ergebnisse in der richtigen Reihenfolge und verwendet die erste Ziffer jedes Ergebnisses, um den Code zu knacken.</strong></p>  
+            </div>  
+            
+            <div>  
+                <label><strong>Gib den 4-stelligen Code ein:</strong></label>  
+                <input type="text" id="puzzle1-input" maxlength="4" class="code-input" style="width: 100%" placeholder="Code eingeben">  
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">  
+                    <div>  
+                        <button id="hint1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>  
+                        <button id="hint1-2-button" class="hint-button hidden">Hinweis 2 (-5 Min.)</button>  
+                        <button id="hint1-3-button" class="hint-button hidden">Hinweis 3 (-5 Min.)</button>  
+                    </div>  
+                    <button id="submit1-button">Prüfen</button>  
+                </div>  
+                
+                <div id="hint1-1-container" class="hidden" style="margin-top: 1rem; padding: 1rem; background-color: #e0f2fe; border-radius: 0.375rem;">  
+                    <h4>Hinweis 1:</h4>  
+                    <p>Schaut euch das Whiteboard im Raum an! Dort findet ihr alle Umrechnungsformeln für die verschiedenen Temperatureinheiten.</p>  
+                </div>  
+                
+                <div id="hint1-2-container" class="hidden" style="margin-top: 1rem; padding: 1rem; background-color: #e0f2fe; border-radius: 0.375rem;">  
+                    <h4>Hinweis 2:</h4>  
+                    <p>Auf dem Whiteboard stehen die Formeln mit Beispielen:</p>  
+                    <ul>  
+                        <li>Celsius zu Kelvin: K = °C + 273,15 (Beispiel: 20°C = 293,15 K)</li>  
+                        <li>Celsius zu Fahrenheit: °F = (°C × 9/5) + 32 (Beispiel: 20°C = 68°F)</li>  
+                        <li>Kelvin zu Celsius: °C = K - 273,15 (Beispiel: 293,15 K = 20°C)</li>  
+                        <li>Fahrenheit zu Celsius: °C = (°F - 32) × 5/9 (Beispiel: 68°F = 20°C)</li>  
+                    </ul>  
+                </div>  
+                
+                <div id="hint1-3-container" class="hidden" style="margin-top: 1rem; padding: 1rem; background-color: #e0f2fe; border-radius: 0.375rem;">  
+                    <h4>Hinweis 3:</h4>  
+                    <p>Die Reihenfolge laut Aufgabe ist: Körpertemperatur (37°C), Kühlschrank (5°C), Siedepunkt von Wasser (373,15 K), Temperatur, bei der Celsius und Fahrenheit übereinstimmen (-40°F). Denkt an die ersten Ziffern jedes Ergebnisses!</p>  
+                </div>  
+                
+                <div id="feedback1" class="hidden" style="margin-top: 1rem;"></div>  
+            </div>  
+        </section>  
+    </main>  
+    
+    <script>  
+        // Game Configuration  
+        const TOTAL_TIME = 80 * 60; // 80 minutes in seconds  
+        const HINT_PENALTY = 5 * 60; // 5 minutes in seconds  
         
-        <!-- Puzzle 1 -->
-        <section id="puzzle1" class="puzzle-container hidden">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Rätsel 1: Die geheime Formel</h2>
-            
-            <div class="professor-note font-typewriter">
-                <p>Die verschlüsselte Nachricht von Professor Kelvinius:</p>
-                <p class="mt-2">Die richtige Reihenfolge ist: Normale Körpertemperatur, Temperatur eines kalten Kühlschranks, Siedepunkt von Wasser, Temperatur, bei der Celsius und Fahrenheit übereinstimmen.</p>
-            </div>
-            
-            <div class="mt-6">
-                <h3 class="font-bold text-lg">Berechne folgende Temperaturen:</h3>
-                <ul class="list-disc pl-6 mt-2 space-y-2">
-                    <li>37°C in Kelvin = ?</li>
-                    <li>5°C in Fahrenheit = ?</li>
-                    <li>373,15 K in Celsius = ?</li>
-                    <li>-40°F in Celsius = ?</li>
-                </ul>
-            </div>
-            
-            <div class="mt-6">
-                <p class="font-bold">Ordnet die Ergebnisse in der richtigen Reihenfolge und verwendet die erste Ziffer jedes Ergebnisses, um den Code zu knacken.</p>
-            </div>
-            
-            <div class="mt-6">
-                <label class="block font-bold mb-2">Gib den 4-stelligen Code ein:</label>
-                <input type="text" id="puzzle1-input" maxlength="4" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Code eingeben">
-                
-                <div class="flex mt-4 justify-between">
-                    <div>
-                        <button id="hint1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                        <button id="hint1-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                        <button id="hint1-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>
-                    </div>
-                    <button id="submit1-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                        Prüfen
-                    </button>
-                </div>
-                
-                <div id="hint1-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                    <h4 class="font-bold">Hinweis 1:</h4>
-                    <p>Schaut euch das Whiteboard im Raum an! Dort findet ihr alle Umrechnungsformeln für die verschiedenen Temperatureinheiten.</p>
-                </div>
-                
-                <div id="hint1-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                    <h4 class="font-bold">Hinweis 2:</h4>
-                    <p>Auf dem Whiteboard stehen die Formeln mit Beispielen:</p>
-                    <ul class="list-disc pl-6 mt-2 space-y-1">
-                        <li>Celsius zu Kelvin: K = °C + 273,15 (Beispiel: 20°C = 293,15 K)</li>
-                        <li>Celsius zu Fahrenheit: °F = (°C × 9/5) + 32 (Beispiel: 20°C = 68°F)</li>
-                        <li>Kelvin zu Celsius: °C = K - 273,15 (Beispiel: 293,15 K = 20°C)</li>
-                        <li>Fahrenheit zu Celsius: °C = (°F - 32) × 5/9 (Beispiel: 68°F = 20°C)</li>
-                    </ul>
-                </div>
-                
-                <div id="hint1-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                    <h4 class="font-bold">Hinweis 3:</h4>
-                    <p>Die Reihenfolge laut Aufgabe ist: Körpertemperatur (37°C), Kühlschrank (5°C), Siedepunkt von Wasser (373,15 K), Temperatur, bei der Celsius und Fahrenheit übereinstimmen (-40°F). Denkt an die ersten Ziffern jedes Ergebnisses!</p>
-                </div>
-                
-                <div id="feedback1" class="hidden mt-4 p-3 rounded-md"></div>
-            </div>
-        </section>
+        // Game State  
+        let gameStarted = false;  
+        let remainingTime = TOTAL_TIME;  
+        let timerInterval;  
+        let currentPuzzle = 0;  
         
-        <!-- Puzzle 2 -->
-        <section id="puzzle2" class="puzzle-container hidden">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Rätsel 2: Die geheime Erfindung</h2>
-            
-            <div class="professor-note font-typewriter">
-                <p>Notiz auf dem Labortisch:</p>
-                <p class="mt-2">Professor Kelvinius hat ein neuartiges Thermometer entwickelt, aber seine Erkenntnisse sind verschlüsselt. Um den nächsten Hinweis zu finden, müsst ihr sein komplexes Rätsel zum Aufbau und zur Funktionsweise von Thermometern lösen.</p>
-                <p class="mt-2">Die Anfangsbuchstaben der chronologischen Reihenfolge, das Wort aus Aufgabe 2, der Buchstabe des größten Werts aus Aufgabe 3 und das Wort aus Aufgabe 4 ergeben zusammen das Lösungswort.</p>
-            </div>
-            
-            <!-- Puzzle 2 - Part 1 -->
-            <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <h3 class="font-bold text-lg mb-2">Teil 1: Historische Thermometerentwicklungen</h3>
-                <p>Ordne die historischen Thermometerentwicklungen chronologisch vom ältesten zum neuesten. Die Zahlen neben der korrekten Reihenfolge ergeben die ersten Ziffern des Codes.</p>
-                <ul class="list-disc pl-6 mt-2 space-y-1">
-                    <li>A) Quecksilberthermometer von Fahrenheit - 5</li>
-                    <li>B) Galileos Thermoskop - 7</li>
-                    <li>C) Celsius-Skala - 2</li>
-                    <li>D) Infrarot-Thermometer - 9</li>
-                    <li>E) Kelvin-Skala - 3</li>
-                </ul>
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib den Code für Teil 1 ein:</label>
-                    <input type="text" id="puzzle2-part1-input" maxlength="5" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Code eingeben">
-                    
-                    <div class="flex mt-4 justify-between">
-                        <div>
-                            <button id="hint2-1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                            <button id="hint2-1-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                        </div>
-                        <button id="submit2-part1-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                            Prüfen
-                        </button>
-                    </div>
-                    
-                    <div id="hint2-1-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 1:</h4>
-                        <p>Schaut euch die Thermometer-Abbildungen an der Tafel genau an! Beachtet die Details auf den Thermometerskalen.</p>
-                    </div>
-                    
-                    <div id="hint2-1-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 2:</h4>
-                        <p>Die chronologische Reihenfolge der Thermometer mit ihren Codes ist:</p>
-                        <ul class="list-disc pl-6 mt-2 space-y-1">
-                            <li>B) Galileos Thermoskop - 7</li>
-                            <li>A) Quecksilberthermometer von Fahrenheit - 5</li>
-                            <li>C) Celsius-Skala - 2</li>
-                            <li>E) Kelvin-Skala - 3</li>
-                            <li>D) Infrarot-Thermometer - 9</li>
-                        </ul>
-                    </div>
-                    
-                    <div id="feedback2-part1" class="hidden mt-4 p-3 rounded-md"></div>
-                </div>
-            </div>
-            
-            <!-- Puzzle 2 - Part 2 -->
-            <div id="puzzle2-part2-container" class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 hidden">
-                <h3 class="font-bold text-lg mb-2">Teil 2: Thermometertypen</h3>
-                <p>Löse die Aufgabe zu den verschiedenen Thermometertypen und finde das Lösungswort.</p>
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib das Lösungswort für Teil 2 ein:</label>
-                    <input type="text" id="puzzle2-part2-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Lösungswort eingeben">
-                    
-                    <div class="flex mt-4 justify-between">
-                        <div>
-                            <button id="hint2-2-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                            <button id="hint2-2-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                        </div>
-                        <button id="submit2-part2-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                            Prüfen
-                        </button>
-                    </div>
-                    
-                    <div id="hint2-2-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 1:</h4>
-                        <p>Vergleiche die verschiedenen Thermometertypen und ihre Funktionsprinzipien. Welche Thermometertypen gibt es?</p>
-                    </div>
-                    
-                    <div id="hint2-2-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 2:</h4>
-                        <p>Das gesuchte Wort bezeichnet einen wissenschaftlichen Arbeitsplatz mit fünf Buchstaben. In diesem Raum befindet sich der Professor häufig.</p>
-                    </div>
-                    
-                    <div id="feedback2-part2" class="hidden mt-4 p-3 rounded-md"></div>
-                </div>
-            </div>
-            
-            <!-- Puzzle 2 - Part 3 -->
-            <div id="puzzle2-part3-container" class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 hidden">
-                <h3 class="font-bold text-lg mb-2">Teil 3: Temperaturwerte</h3>
-                <p>Berechne verschiedene Temperaturwerte und finde den Buchstaben des größten Werts.</p>
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib den Lösungsbuchstaben für Teil 3 ein:</label>
-                    <input type="text" id="puzzle2-part3-input" maxlength="1" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Buchstaben eingeben">
-                    
-                    <div class="flex mt-4 justify-between">
-                        <div>
-                            <button id="hint2-3-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                            <button id="hint2-3-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                        </div>
-                        <button id="submit2-part3-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                            Prüfen
-                        </button>
-                    </div>
-                    
-                    <div id="hint2-3-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 1:</h4>
-                        <p>Berechne die Temperaturen sorgfältig und achte auf die Einheiten.</p>
-                    </div>
-                    
-                    <div id="hint2-3-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 2:</h4>
-                        <p>Nachdem du alle Werte berechnet hast, sortiere sie der Größe nach und identifiziere den größten Wert.</p>
-                    </div>
-                    
-                    <div id="feedback2-part3" class="hidden mt-4 p-3 rounded-md"></div>
-                </div>
-            </div>
-            
-            <!-- Puzzle 2 - Part 4 -->
-            <div id="puzzle2-part4-container" class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 hidden">
-                <h3 class="font-bold text-lg mb-2">Teil 4: Das letzte Wort</h3>
-                <p>Finde das letzte Wort für das Gesamtlösungswort.</p>
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib das Lösungswort für Teil 4 ein:</label>
-                    <input type="text" id="puzzle2-part4-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Lösungswort eingeben">
-                    
-                    <div class="flex mt-4 justify-between">
-                        <div>
-                            <button id="hint2-4-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                            <button id="hint2-4-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                        </div>
-                        <button id="submit2-part4-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                            Prüfen
-                        </button>
-                    </div>
-                    
-                    <div id="hint2-4-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 1:</h4>
-                        <p>Das Wort hat etwas mit der Lagerung von Chemikalien oder Labormaterialien zu tun.</p>
-                    </div>
-                    
-                    <div id="hint2-4-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 2:</h4>
-                        <p>Es ist ein Möbelstück mit vier Buchstaben, das sich oft in Laboren befindet.</p>
-                    </div>
-                    
-                    <div id="feedback2-part4" class="hidden mt-4 p-3 rounded-md"></div>
-                </div>
-            </div>
-            
-            <!-- Puzzle 2 - Final Input -->
-            <div id="puzzle2-final-container" class="mt-6 hidden">
-                <div class="p-4 border-2 border-indigo-200 rounded-lg bg-indigo-50">
-                    <h3 class="font-bold text-lg mb-2 text-indigo-800">Gesamtlösung für Rätsel 2</h3>
-                    <p>Kombiniere die Ergebnisse aller vier Teile:</p>
-                    <ul class="list-disc pl-6 mt-2 space-y-1">
-                        <li>Teil 1: Code aus der chronologischen Reihenfolge</li>
-                        <li>Teil 2: Das Wort aus den Thermometertypen</li>
-                        <li>Teil 3: Der Buchstabe des größten Werts</li>
-                        <li>Teil 4: Das letzte Wort</li>
-                    </ul>
-                    
-                    <div class="mt-4">
-                        <label class="block font-bold mb-2">Gib das vollständige Lösungswort ein:</label>
-                        <input type="text" id="puzzle2-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Lösungswort eingeben">
-                        
-                        <div class="flex mt-4 justify-end">
-                            <button id="submit2-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                                Prüfen
-                            </button>
-                        </div>
-                        
-                        <div id="feedback2" class="hidden mt-4 p-3 rounded-md"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        // DOM Elements  
+        const startButton = document.getElementById('start-game');  
+        const timerDisplay = document.getElementById('timer-display');  
+        const timer = document.getElementById('timer');  
+        const introTimer = document.getElementById('intro-timer');  
         
-        <!-- Puzzle 3 -->
-        <section id="puzzle3" class="puzzle-container hidden">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Rätsel 3: Das molekulare Rätsel</h2>
-            
-            <div class="professor-note font-typewriter">
-                <p>Professor Kelvinius hat ein Rätsel über die molekularen Grundlagen der Wärmelehre erstellt.</p>
-            </div>
-            
-            <!-- Puzzle 3 - Part 1 -->
-            <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <h3 class="font-bold text-lg">Teil 1: Wahr oder Falsch?</h3>
-                <p>Kreuzt die folgenden Aussagen nach "wahr" oder "falsch" an. Die Buchstaben der wahren Aussagen ergeben in der richtigen Reihenfolge ein wichtiges Lösungswort.</p>
-                <ul class="list-disc pl-6 mt-2 space-y-2">
-                    <li>Bei Erwärmung eines Gases nehmen die Abstände zwischen den Teilchen zu. (T)</li>
-                    <li>Die Teilchen in einem heißen Gas sind größer als in einem kalten Gas. (X)</li>
-                    <li>Die Temperatur ist ein direktes Maß für die Bewegungsenergie der Teilchen. (I)</li>
-                    <li>Die Teilchenzahl in einem Gas nimmt mit steigender Temperatur zu. (Y)</li>
-                    <li>Beim absoluten Nullpunkt hören alle Teilchenbewegungen theoretisch auf. (L)</li>
-                    <li>Gasmoleküle bewegen sich in geordneten, kreisförmigen Bahnen. (Z)</li>
-                    <li>Bei konstanter Temperatur ist die Bewegungsenergie aller Gasteilchen nie gleich. (K)</li>
-                    <li>Beim Erwärmen eines Gases erhöht sich die Häufigkeit der Teilchenstöße. (C)</li>
-                    <li>Die Zufälligkeit der Teilchenbewegung nimmt mit steigender Temperatur ab. (R)</li>
-                    <li>Gase können sich bei Erwärmung ausdehnen, weil die Teilchen mehr Raum benötigen. (H)</li>
-                    <li>Die Teilchen eines Gases stoßen gegeneinander. (E)</li>
-                    <li>Bei Raumtemperatur bewegen sich Gasteilchen mit mehreren hundert Metern pro Sekunde. (N)</li>
-                </ul>
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib das Lösungswort für Teil 1 ein:</label>
-                    <input type="text" id="puzzle3-part1-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Lösungswort eingeben">
-                    
-                    <div class="flex mt-4 justify-between">
-                        <div>
-                            <button id="hint3-1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                            <button id="hint3-1-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                            <button id="hint3-1-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>
-                        </div>
-                        <button id="submit3-part1-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                            Prüfen
-                        </button>
-                    </div>
-                    
-                    <div id="hint3-1-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 1:</h4>
-                        <p>Überlegt euch bei den Aussagen genau, was ihr über die kinetische Gastheorie wisst. Einige Aussagen sind Fehlvorstellungen.</p>
-                    </div>
-                    
-                    <div id="hint3-1-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 2:</h4>
-                        <p>Achtet besonders auf Aussagen über die Teilchengröße, geordnete Bewegungen und die Veränderung der Teilchenzahl.</p>
-                    </div>
-                    
-                    <div id="hint3-1-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 3:</h4>
-                        <p>Die Buchstaben der richtigen Aussagen in der korrekten Reihenfolge lauten: E, H, N, L, C, T, I</p>
-                    </div>
-                    
-                    <div id="feedback3-part1" class="hidden mt-4 p-3 rounded-md"></div>
-                </div>
-            </div>
-            
-            <!-- Puzzle 3 - Part 2 -->
-            <div id="puzzle3-part2-container" class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 hidden">
-                <h3 class="font-bold text-lg">Teil 2: Schema vervollständigen</h3>
-                <p>Vervollständigt das Schema. Lösungswort ist der fehlende Begriff (zwischen 'fest' und 'kondensieren').</p>
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib das Lösungswort für Teil 2 ein:</label>
-                    <input type="text" id="puzzle3-part2-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Lösungswort eingeben">
-                    
-                    <div class="flex mt-4 justify-between">
-                        <div>
-                            <button id="hint3-2-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                            <button id="hint3-2-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                        </div>
-                        <button id="submit3-part2-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                            Prüfen
-                        </button>
-                    </div>
-                    
-                    <div id="hint3-2-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 1:</h4>
-                        <p>Beim gesuchten Begriff handelt es sich um einen Aggregatzustandswechsel.</p>
-                    </div>
-                    
-                    <div id="hint3-2-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 2:</h4>
-                        <p>Die Begriffe "gasförmig, flüssig, schmelzen, sieden, erstarren, sublimieren" beschreiben verschiedene Aggregatzustandsänderungen. Überlege, welcher Prozess im Schema fehlt.</p>
-                    </div>
-                    
-                    <div id="feedback3-part2" class="hidden mt-4 p-3 rounded-md"></div>
-                </div>
-            </div>
-            
-            <!-- Puzzle 3 - Final Input -->
-            <div id="puzzle3-final-container" class="mt-6 hidden">
-                <div class="p-4 border-2 border-indigo-200 rounded-lg bg-indigo-50">
-                    <h3 class="font-bold text-lg mb-2 text-indigo-800">Gesamtlösung für Rätsel 3</h3>
-                    <p>Kombiniere die Ergebnisse beider Teile:</p>
-                    <ul class="list-disc pl-6 mt-2 space-y-1">
-                        <li>Teil 1: Das Lösungswort aus den wahren Aussagen</li>
-                        <li>Teil 2: Der fehlende Begriff im Schema</li>
-                    </ul>
-                    
-                    <div class="mt-4">
-                        <label class="block font-bold mb-2">Gib das vollständige Lösungswort ein:</label>
-                        <input type="text" id="puzzle3-input" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Lösungswort eingeben">
-                        
-                        <div class="flex mt-4 justify-end">
-                            <button id="submit3-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                                Prüfen
-                            </button>
-                        </div>
-                        
-                        <div id="feedback3" class="hidden mt-4 p-3 rounded-md"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        const introSection = document.getElementById('intro');  
+        const puzzle1Section = document.getElementById('puzzle1');  
         
-        <!-- Puzzle 4 -->
-        <section id="puzzle4" class="puzzle-container hidden">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Rätsel 4: Die Welt der Wärmeausdehnung</h2>
-            
-            <div class="professor-note font-typewriter">
-                <p>Forschungsnotizen des Professors:</p>
-                <p class="mt-2">"Die Ausdehnung von Materialien bei Erwärmung ist ein faszinierendes Phänomen! Ich habe verschiedene Substanzen analysiert und ihre Ausdehnungskoeffizienten berechnet. Diese Erkenntnisse sind der Schlüssel zu meiner neuesten Erfindung..."</p>
-            </div>
-            
-            <!-- Puzzle 4 - Part 1 -->
-            <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <h3 class="font-bold text-lg">Teil 1: Hauptgruppen</h3>
-                <p>Die ersten zwei Ziffern des Codes sind die Summe aus den Nummern aller Stoffe, die im Periodensystem in einer Hauptgruppe stehen.</p>
-                <div class="overflow-x-auto mt-2">
-                    <table class="min-w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="border border-gray-300 px-4 py-2">Material</th>
-                                <th class="border border-gray-300 px-4 py-2">Linearer Ausdehnungskoeffizient α in K⁻¹</th>
-                                <th class="border border-gray-300 px-4 py-2">Nummer</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2">Eisen</td>
-                                <td class="border border-gray-300 px-4 py-2">0,000012</td>
-                                <td class="border border-gray-300 px-4 py-2">7</td>
-                            </tr>
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2">Kupfer</td>
-                                <td class="border border-gray-300 px-4 py-2">0,000017</td>
-                                <td class="border border-gray-300 px-4 py-2">2</td>
-                            </tr>
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2">Aluminium</td>
-                                <td class="border border-gray-300 px-4 py-2">0,000023</td>
-                                <td class="border border-gray-300 px-4 py-2">9</td>
-                            </tr>
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2">Blei</td>
-                                <td class="border border-gray-300 px-4 py-2">0,000029</td>
-                                <td class="border border-gray-300 px-4 py-2">5</td>
-                            </tr>
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2">Zinn</td>
-                                <td class="border border-gray-300 px-4 py-2">0,000022</td>
-                                <td class="border border-gray-300 px-4 py-2">8</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib die ersten beiden Ziffern des Codes ein:</label>
-                    <input type="text" id="puzzle4-part1-input" maxlength="2" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Code eingeben">
-                    
-                    <div class="flex mt-4 justify-between">
-                        <div>
-                            <button id="hint4-1-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                            <button id="hint4-1-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                            <button id="hint4-1-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>
-                        </div>
-                        <button id="submit4-part1-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                            Prüfen
-                        </button>
-                    </div>
-                    
-                    <div id="hint4-1-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 1:</h4>
-                        <p>Es gibt ein Periodensystem im Raum. Schaut es euch an und findet heraus, welche der genannten Metalle in einer Hauptgruppe stehen.</p>
-                    </div>
-                    
-                    <div id="hint4-1-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 2:</h4>
-                        <p>Hauptgruppen und Nebengruppen im Periodensystem:</p>
-                        <ul class="list-disc pl-6 mt-2 space-y-1">
-                            <li>Hauptgruppen sind die Gruppen 1, 2 und 13-18. Elemente in diesen Gruppen werden als Hauptgruppenelemente bezeichnet.</li>
-                            <li>Nebengruppen sind die Gruppen 3-12. Elemente in diesen Gruppen werden als Übergangsmetalle bezeichnet.</li>
-                        </ul>
-                        <p class="mt-2">Schaut nach, in welchen Gruppen Kupfer, Eisen, Aluminium, Blei und Zinn stehen.</p>
-                    </div>
-                    
-                    <div id="hint4-1-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 3:</h4>
-                        <p>Von den genannten Metallen befinden sich drei in einer Hauptgruppe. Addiere deren Nummern.</p>
-                    </div>
-                    
-                    <div id="feedback4-part1" class="hidden mt-4 p-3 rounded-md"></div>
-                </div>
-            </div>
-            
-            <!-- Puzzle 4 - Part 2 -->
-            <div id="puzzle4-part2-container" class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 hidden">
-                <h3 class="font-bold text-lg">Teil 2: Längenänderung</h3>
-                <p>Berechne die letzte Stelle des Codes:</p>
-                <p class="mt-2">Eine Eisenbahnschiene aus Eisen mit einer Ausgangslänge von 20 m erwärmt sich von 288 K auf 308 K. Berechnet die Längenänderung in mm.</p>
-                <p class="italic">(Hinweis: ΔL = L₀ × α × ΔT, wobei α der lineare Ausdehnungskoeffizient ist)</p>
-                <div class="mt-2">
-                    <div class="space-y-2">
-                        <div class="flex items-center">
-                            <input type="radio" id="answer-a" name="length-answer" value="a" class="mr-2">
-                            <label for="answer-a">a) 2,4 mm (Code: 3)</label>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="radio" id="answer-b" name="length-answer" value="b" class="mr-2">
-                            <label for="answer-b">b) 4,8 mm (Code: 8)</label>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="radio" id="answer-c" name="length-answer" value="c" class="mr-2">
-                            <label for="answer-c">c) 7,2 mm (Code: 5)</label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib die letzte Ziffer des Codes ein:</label>
-                    <input type="text" id="puzzle4-part2-input" maxlength="1" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Code eingeben">
-                    
-                    <div class="flex mt-4 justify-between">
-                        <div>
-                            <button id="hint4-2-1-button" class="hint-button">Hinweis 1 (-5 Min.)</button>
-                            <button id="hint4-2-2-button" class="hint-button ml-2 hidden">Hinweis 2 (-5 Min.)</button>
-                            <button id="hint4-2-3-button" class="hint-button ml-2 hidden">Hinweis 3 (-5 Min.)</button>
-                        </div>
-                        <button id="submit4-part2-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                            Prüfen
-                        </button>
-                    </div>
-                    
-                    <div id="hint4-2-1-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 1:</h4>
-                        <p>Nutze die Formel für die Längenänderung: ΔL = L₀ × α × ΔT</p>
-                    </div>
-                    
-                    <div id="hint4-2-2-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 2:</h4>
-                        <p>Berechne zuerst die Temperaturdifferenz: ΔT = 308 K - 288 K = 20 K, und setze dann die Werte in die Formel ein.</p>
-                    </div>
-                    
-                    <div id="hint4-2-3-container" class="hidden mt-4 p-4 bg-blue-50 rounded-md">
-                        <h4 class="font-bold">Hinweis 3:</h4>
-                        <p>Denk daran, das Ergebnis in mm umzurechnen. 1 m = 1000 mm. Der lineare Ausdehnungskoeffizient von Eisen beträgt 0,000012 K⁻¹.</p>
-                    </div>
-                    
-                    <div id="feedback4-part2" class="hidden mt-4 p-3 rounded-md"></div>
-                </div>
-            </div>
-            
-            <!-- Puzzle 4 - Final Input -->
-            <div id="puzzle4-final-container" class="mt-6 hidden">
-                <div class="p-4 border-2 border-indigo-200 rounded-lg bg-indigo-50">
-                    <h3 class="font-bold text-lg mb-2 text-indigo-800">Gesamtlösung für Rätsel 4</h3>
-                    <p>Kombiniere die Ergebnisse beider Teile:</p>
-                    <ul class="list-disc pl-6 mt-2 space-y-1">
-                        <li>Teil 1: Die ersten zwei Ziffern (Hauptgruppen)</li>
-                        <li>Teil 2: Die letzte Ziffer (Längenänderung)</li>
-                    </ul>
-                    
-                    <div class="mt-4">
-                        <label class="block font-bold mb-2">Gib den vollständigen 3-stelligen Code ein:</label>
-                        <input type="text" id="puzzle4-input" maxlength="3" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Code eingeben">
-                        
-                        <div class="flex mt-4 justify-end">
-                            <button id="submit4-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-md transition duration-200">
-                                Prüfen
-                            </button>
-                        </div>
-                        
-                        <div id="feedback4" class="hidden mt-4 p-3 rounded-md"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        // Puzzle 1 Elements  
+        const puzzle1Input = document.getElementById('puzzle1-input');  
+        const submit1Button = document.getElementById('submit1-button');  
+        const feedback1 = document.getElementById('feedback1');  
         
-        <!-- Final Puzzle -->
-        <section id="final-puzzle" class="puzzle-container hidden">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Finales Rätsel: Die Rettung</h2>
+        // Hint Buttons  
+        const hint1_1Button = document.getElementById('hint1-1-button');  
+        const hint1_2Button = document.getElementById('hint1-2-button');  
+        const hint1_3Button = document.getElementById('hint1-3-button');  
+        
+        // Hint Containers  
+        const hint1_1Container = document.getElementById('hint1-1-container');  
+        const hint1_2Container = document.getElementById('hint1-2-container');  
+        const hint1_3Container = document.getElementById('hint1-3-container');  
+        
+        // Solutions  
+        const SOLUTIONS = {  
+            puzzle1: "3414"  
+        };  
+        
+        // Helper Functions  
+        function formatTime(seconds) {  
+            const mins = Math.floor(seconds / 60);  
+            const secs = seconds % 60;  
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;  
+        }  
+        
+        function updateTimer() {  
+            if (remainingTime <= 0) {  
+                clearInterval(timerInterval);  
+                gameOver(false);  
+                return;  
+            }  
             
-            <div class="professor-note font-typewriter">
-                <p>Dringende Nachricht von Professor Kelvinius:</p>
-                <p class="mt-2">"Meine experimentelle Kühlanlage ist außer Kontrolle geraten! Um sie zu stabilisieren, müsst ihr die exakte Temperatur berechnen, auf die das System gebracht werden muss. Folgt meinen Anweisungen genau!"</p>
-            </div>
+            remainingTime--;  
+            timer.textContent = formatTime(remainingTime);  
+            introTimer.textContent = formatTime(remainingTime);  
+        }  
+        
+        function startGame() {  
+            gameStarted = true;  
+            timerInterval = setInterval(updateTimer, 1000);  
+            timerDisplay.classList.remove('hidden');  
             
-            <div class="mt-6">
-                <h3 class="font-bold text-lg">Löst das finale Rätsel:</h3>
-                <ol class="list-decimal pl-6 mt-2 space-y-2">
-                    <li>Die Kühlanlage zeigt aktuell eine Temperatur von 122 °F an.</li>
-                    <li>Diese Temperatur muss zuerst in Celsius umgerechnet werden.</li>
-                    <li>Danach muss die Temperatur um 25 °C gesenkt werden.</li>
-                    <li>Diese Temperatur muss in Kelvin umgerechnet werden.</li>
-                </ol>
-            </div>
+            // Hide intro, show first puzzle  
+            introSection.classList.add('hidden');  
+            puzzle1Section.classList.remove('hidden');  
             
-            <div class="mt-6">
-                <label class="block font-bold mb-2">Gib den berechneten Wert für die Kühlanlage ein:</label>
-                <input type="text" id="final-input-numeric" maxlength="3" class="code-input w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none" placeholder="Temperatur eingeben">
-                
-                <div class="mt-4">
-                    <label class="block font-bold mb-2">Gib das Aktivierungswort für die Kühlung ein:</label>
-                    <input type="text" id="final-input-word" class="w-full p-2 border-2 border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none uppercase" placeholder="Aktivierungswort eingeben">
-                </div>
-                
-                <div class="flex mt-4 justify-between">
-                    <div>
-                        <button id="hint-final-1-button"
+            currentPuzzle = 1;  
+        }  
+        
+        function showFeedback(element, isCorrect, message) {  
+            element.textContent = message;  
+            element.classList.remove('hidden', 'feedback-success', 'feedback-error');  
+            element.classList.add(isCorrect ? 'feedback-success' : 'feedback-error');  
+        }  
+        
+        function applyHintPenalty() {  
+            remainingTime -= HINT_PENALTY;  
+            if (remainingTime < 0) remainingTime = 0;  
+            timer.textContent = formatTime(remainingTime);  
+            introTimer.textContent = formatTime(remainingTime);  
+        }  
+        
+        // Event Listeners  
+        startButton.addEventListener('click', startGame);  
+        
+        // Puzzle 1 Event Listeners  
+        submit1Button.addEventListener('click', () => {  
+            const input = puzzle1Input.value.trim();  
+            if (input === SOLUTIONS.puzzle1) {  
+                showFeedback(feedback1, true, "Richtig! Der Code ist korrekt.");  
+                // Normally we would advance to the next puzzle here  
+                setTimeout(() => {  
+                    alert("Herzlichen Glückwunsch! Sie haben das erste Rätsel gelöst. In der vollständigen Version würden Sie nun zum nächsten Rätsel weitergeleitet.");  
+                }, 1500);  
+            } else {  
+                showFeedback(feedback1, false, "Leider falsch. Überprüfe die Temperaturumrechnungen und die Reihenfolge.");  
+            }  
+        });  
+        
+        // Hint buttons  
+        hint1_1Button.addEventListener('click', () => {  
+            hint1_1Container.classList.remove('hidden');  
+            hint1_2Button.classList.remove('hidden');  
+            applyHintPenalty();  
+        });  
+        
+        hint1_2Button.addEventListener('click', () => {  
+            hint1_2Container.classList.remove('hidden');  
+            hint1_3Button.classList.remove('hidden');  
+            applyHintPenalty();  
+        });  
+        
+        hint1_3Button.addEventListener('click', () => {  
+            hint1_3Container.classList.remove('hidden');  
+            applyHintPenalty();  
+        });  
+        
+        // Initialize timer display  
+        timer.textContent = formatTime(remainingTime);  
+        introTimer.textContent = formatTime(remainingTime);  
+    </script>  
+</body>  
+</html>
