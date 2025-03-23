@@ -487,281 +487,279 @@
         </section>
     </main>
     
-    <script>
-        // Game Configuration
-        const TOTAL_TIME = 80 * 60; // 80 minutes in seconds
-        const HINT_PENALTY = 5 * 60; // 5 minutes in seconds
-        const SOLUTIONS = {
-            puzzle1: "3414",
-            puzzle2: "75239LABORHRANK",
-            puzzle3: "TEILCHEN",
-            puzzle4: "228",
-            finalNumeric: "298",
-            finalWord: "KALT"
-        };
+    <script>  
+    // Game Configuration  
+    const TOTAL_TIME = 80 * 60; // 80 minutes in seconds  
+    const HINT_PENALTY = 5 * 60; // 5 minutes in seconds  
+    const SOLUTIONS = {  
+        puzzle1: "3414",  
+        puzzle2: "75239LABORHRANK",  
+        puzzle3: "TEILCHEN",  
+        puzzle4: "228",  
+        finalNumeric: "298",  
+        finalWord: "KALT"  
+    };  
+    
+    // Game State  
+    let gameStarted = false;  
+    let currentPuzzle = 0;  
+    let remainingTime = TOTAL_TIME; // Geändert von timeRemaining zu remainingTime  
+    let timerInterval;  
+    let hintsUsed = 0;  
+    
+    // DOM Elements  
+    const sections = {  
+        intro: document.getElementById('intro'),  
+        progress: document.getElementById('progress-section'),  
+        puzzle1: document.getElementById('puzzle1'),  
+        puzzle2: document.getElementById('puzzle2'),  
+        puzzle3: document.getElementById('puzzle3'),  
+        puzzle4: document.getElementById('puzzle4'),  
+        finalPuzzle: document.getElementById('final-puzzle'),  
+        success: document.getElementById('success-screen'),  
+        failure: document.getElementById('failure-screen')  
+    };  
+    
+    const inputs = {  
+        puzzle1: document.getElementById('puzzle1-input'),  
+        puzzle2: document.getElementById('puzzle2-input'),  
+        puzzle3: document.getElementById('puzzle3-input'),  
+        puzzle4: document.getElementById('puzzle4-input'),  
+        finalNumeric: document.getElementById('final-input-numeric'),  
+        finalWord: document.getElementById('final-input-word')  
+    };  
+    
+    const buttons = {  
+        start: document.getElementById('start-game'),  
+        submit1: document.getElementById('submit1-button'),  
+        submit2: document.getElementById('submit2-button'),  
+        submit3: document.getElementById('submit3-button'),  
+        submit4: document.getElementById('submit4-button'),  
+        submitFinal: document.getElementById('submit-final-button'),  
+        hint1: document.getElementById('hint1-button'),  
+        hint2: document.getElementById('hint2-button'),  
+        hint3: document.getElementById('hint3-button'),  
+        hint4: document.getElementById('hint4-button'),  
+        hintFinal: document.getElementById('hint-final-button'),  
+        restart: document.getElementById('restart-button'),  
+        restartFail: document.getElementById('restart-button-fail')  
+    };  
+    
+    const hintContainers = {  
+        hint1: document.getElementById('hint1-container'),  
+        hint2: document.getElementById('hint2-container'),  
+        hint3: document.getElementById('hint3-container'),  
+        hint4: document.getElementById('hint4-container'),  
+        hintFinal: document.getElementById('hint-final-container')  
+    };  
+    
+    const feedbacks = {  
+        feedback1: document.getElementById('feedback1'),  
+        feedback2: document.getElementById('feedback2'),  
+        feedback3: document.getElementById('feedback3'),  
+        feedback4: document.getElementById('feedback4'),  
+        feedbackFinal: document.getElementById('feedback-final')  
+    };  
+    
+    const timer = document.getElementById('timer');  
+    const progressBar = document.getElementById('progress-bar');  
+    const timeRemainingDisplay = document.getElementById('time-remaining'); // Geändert von timeRemaining zu timeRemainingDisplay  
+    
+    // Helper Functions  
+    function formatTime(seconds) {  
+        const mins = Math.floor(seconds / 60);  
+        const secs = seconds % 60;  
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;  
+    }  
+    
+    function updateTimer() {  
+        if (remainingTime <= 0) { // Geändert von timeRemaining zu remainingTime  
+            clearInterval(timerInterval);  
+            gameOver(false);  
+            return;  
+        }  
         
-        // Game State
-        let gameStarted = false;
-        let currentPuzzle = 0;
-        let timeRemaining = TOTAL_TIME;
-        let timerInterval;
-        let hintsUsed = 0;
+        remainingTime--; // Geändert von timeRemaining zu remainingTime  
+        timer.textContent = formatTime(remainingTime); // Geändert von timeRemaining zu remainingTime  
+    }  
+    
+    function showSection(section) {  
+        // Hide all sections  
+        Object.values(sections).forEach(s => s.classList.add('hidden'));  
         
-        // DOM Elements
-        const sections = {
-            intro: document.getElementById('intro'),
-            progress: document.getElementById('progress-section'),
-            puzzle1: document.getElementById('puzzle1'),
-            puzzle2: document.getElementById('puzzle2'),
-            puzzle3: document.getElementById('puzzle3'),
-            puzzle4: document.getElementById('puzzle4'),
-            finalPuzzle: document.getElementById('final-puzzle'),
-            success: document.getElementById('success-screen'),
-            failure: document.getElementById('failure-screen')
-        };
+        // Show the requested section  
+        section.classList.remove('hidden');  
+    }  
+    
+    function updateProgress() {  
+        const progressPercentage = (currentPuzzle / 5) * 100;  
+        progressBar.style.width = `${progressPercentage}%`;  
+    }  
+    
+    function applyHintPenalty() {  
+        remainingTime -= HINT_PENALTY; // Geändert von timeRemaining zu remainingTime  
+        if (remainingTime < 0) remainingTime = 0; // Geändert von timeRemaining zu remainingTime  
+        timer.textContent = formatTime(remainingTime); // Geändert von timeRemaining zu remainingTime  
+        hintsUsed++;  
+    }  
+    
+    function showFeedback(element, isCorrect, message) {  
+        element.textContent = message;  
+        element.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'text-red-700', 'text-green-700');  
+        element.classList.add(isCorrect ? 'bg-green-100' : 'bg-red-100');  
+        element.classList.add(isCorrect ? 'text-green-700' : 'text-red-700');  
+    }  
+    
+    function advanceToPuzzle(puzzleNumber) {  
+        currentPuzzle = puzzleNumber;  
+        updateProgress();  
         
-        const inputs = {
-            puzzle1: document.getElementById('puzzle1-input'),
-            puzzle2: document.getElementById('puzzle2-input'),
-            puzzle3: document.getElementById('puzzle3-input'),
-            puzzle4: document.getElementById('puzzle4-input'),
-            finalNumeric: document.getElementById('final-input-numeric'),
-            finalWord: document.getElementById('final-input-word')
-        };
+        switch(puzzleNumber) {  
+            case 1:  
+                showSection(sections.puzzle1);  
+                break;  
+            case 2:  
+                showSection(sections.puzzle2);  
+                break;  
+            case 3:  
+                showSection(sections.puzzle3);  
+                break;  
+            case 4:  
+                showSection(sections.puzzle4);  
+                break;  
+            case 5:  
+                showSection(sections.finalPuzzle);  
+                break;  
+            case 6:  
+                gameOver(true);  
+                break;  
+        }  
+    }  
+    
+    function gameOver(success) {  
+        clearInterval(timerInterval);  
         
-        const buttons = {
-            start: document.getElementById('start-game'),
-            submit1: document.getElementById('submit1-button'),
-            submit2: document.getElementById('submit2-button'),
-            submit3: document.getElementById('submit3-button'),
-            submit4: document.getElementById('submit4-button'),
-            submitFinal: document.getElementById('submit-final-button'),
-            hint1: document.getElementById('hint1-button'),
-            hint2: document.getElementById('hint2-button'),
-            hint3: document.getElementById('hint3-button'),
-            hint4: document.getElementById('hint4-button'),
-            hintFinal: document.getElementById('hint-final-button'),
-            restart: document.getElementById('restart-button'),
-            restartFail: document.getElementById('restart-button-fail')
-        };
+        if (success) {  
+            timeRemainingDisplay.textContent = formatTime(remainingTime); // Geändert von timeRemaining zu timeRemainingDisplay und remainingTime  
+            showSection(sections.success);  
+        } else {  
+            showSection(sections.failure);  
+        }  
+    }  
+    
+    function restartGame() {  
+        remainingTime = TOTAL_TIME; // Geändert von timeRemaining zu remainingTime  
+        currentPuzzle = 0;  
+        hintsUsed = 0;  
+        gameStarted = false;  
         
-        const hintContainers = {
-            hint1: document.getElementById('hint1-container'),
-            hint2: document.getElementById('hint2-container'),
-            hint3: document.getElementById('hint3-container'),
-            hint4: document.getElementById('hint4-container'),
-            hintFinal: document.getElementById('hint-final-container')
-        };
+        // Reset inputs  
+        Object.values(inputs).forEach(input => input.value = '');  
         
-        const feedbacks = {
-            feedback1: document.getElementById('feedback1'),
-            feedback2: document.getElementById('feedback2'),
-            feedback3: document.getElementById('feedback3'),
-            feedback4: document.getElementById('feedback4'),
-            feedbackFinal: document.getElementById('feedback-final')
-        };
+        // Reset feedback  
+        Object.values(feedbacks).forEach(feedback => feedback.classList.add('hidden'));  
         
-        const timer = document.getElementById('timer');
-        const progressBar = document.getElementById('progress-bar');
-        const timeRemaining = document.getElementById('time-remaining');
+        // Reset hints  
+        Object.values(hintContainers).forEach(container => container.classList.add('hidden'));  
         
-        // Helper Functions
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
+        // Reset timer  
+        timer.textContent = formatTime(remainingTime); // Geändert von timeRemaining zu remainingTime  
         
-        function updateTimer() {
-            if (timeRemaining <= 0) {
-                clearInterval(timerInterval);
-                gameOver(false);
-                return;
-            }
-            
-            timeRemaining--;
-            timer.textContent = formatTime(timeRemaining);
-        }
+        // Show intro section  
+        showSection(sections.intro);  
+        sections.progress.classList.add('hidden');  
+    }  
+    
+    // Event Listeners  
+    buttons.start.addEventListener('click', () => {  
+        gameStarted = true;  
+        timerInterval = setInterval(updateTimer, 1000);  
+        sections.progress.classList.remove('hidden');  
+        advanceToPuzzle(1);  
+    });  
+    
+    buttons.submit1.addEventListener('click', () => {  
+        const input = inputs.puzzle1.value.trim();  
+        if (input === SOLUTIONS.puzzle1) {  
+            showFeedback(feedbacks.feedback1, true, "Richtig! Der Code ist korrekt.");  
+            setTimeout(() => advanceToPuzzle(2), 1500);  
+        } else {  
+            showFeedback(feedbacks.feedback1, false, "Leider falsch. Überprüfe die Temperaturumrechnungen und die Reihenfolge.");  
+        }  
+    });  
+    
+    buttons.submit2.addEventListener('click', () => {  
+        const input = inputs.puzzle2.value.trim().toUpperCase();  
+        if (input === SOLUTIONS.puzzle2) {  
+            showFeedback(feedbacks.feedback2, true, "Richtig! Das Lösungswort ist korrekt.");  
+            setTimeout(() => advanceToPuzzle(3), 1500);  
+        } else {  
+            showFeedback(feedbacks.feedback2, false, "Leider falsch. Überprüfe deine Antworten zu den Thermometertypen und ihrer Entwicklung.");  
+        }  
+    });  
+    
+    buttons.submit3.addEventListener('click', () => {  
+        const input = inputs.puzzle3.value.trim().toUpperCase();  
+        if (input === SOLUTIONS.puzzle3) {  
+            showFeedback(feedbacks.feedback3, true, "Richtig! Das Lösungswort ist korrekt.");  
+            setTimeout(() => advanceToPuzzle(4), 1500);  
+        } else {  
+            showFeedback(feedbacks.feedback3, false, "Leider falsch. Überprüfe deine Antworten zum molekularen Modell und den Aggregatzuständen.");  
+        }  
+    });  
+    
+    buttons.submit4.addEventListener('click', () => {  
+        const input = inputs.puzzle4.value.trim();  
+        if (input === SOLUTIONS.puzzle4) {  
+            showFeedback(feedbacks.feedback4, true, "Richtig! Der Code ist korrekt.");  
+            setTimeout(() => advanceToPuzzle(5), 1500);  
+        } else {  
+            showFeedback(feedbacks.feedback4, false, "Leider falsch. Überprüfe deine Berechnungen zur Wärmeausdehnung.");  
+        }  
+    });  
+    
+    buttons.submitFinal.addEventListener('click', () => {  
+        const numericInput = inputs.finalNumeric.value.trim();  
+        const wordInput = inputs.finalWord.value.trim().toUpperCase();  
         
-        function showSection(section) {
-            // Hide all sections
-            Object.values(sections).forEach(s => s.classList.add('hidden'));
-            
-            // Show the requested section
-            section.classList.remove('hidden');
-        }
-        
-        function updateProgress() {
-            const progressPercentage = (currentPuzzle / 5) * 100;
-            progressBar.style.width = `${progressPercentage}%`;
-        }
-        
-        function applyHintPenalty() {
-            timeRemaining -= HINT_PENALTY;
-            if (timeRemaining < 0) timeRemaining = 0;
-            timer.textContent = formatTime(timeRemaining);
-            hintsUsed++;
-        }
-        
-        function showFeedback(element, isCorrect, message) {
-            element.textContent = message;
-            element.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'text-red-700', 'text-green-700');
-            element.classList.add(isCorrect ? 'bg-green-100' : 'bg-red-100');
-            element.classList.add(isCorrect ? 'text-green-700' : 'text-red-700');
-        }
-        
-        function advanceToPuzzle(puzzleNumber) {
-            currentPuzzle = puzzleNumber;
-            updateProgress();
-            
-            switch(puzzleNumber) {
-                case 1:
-                    showSection(sections.puzzle1);
-                    break;
-                case 2:
-                    showSection(sections.puzzle2);
-                    break;
-                case 3:
-                    showSection(sections.puzzle3);
-                    break;
-                case 4:
-                    showSection(sections.puzzle4);
-                    break;
-                case 5:
-                    showSection(sections.finalPuzzle);
-                    break;
-                case 6:
-                    gameOver(true);
-                    break;
-            }
-        }
-        
-        function gameOver(success) {
-            clearInterval(timerInterval);
-            
-            if (success) {
-                timeRemaining.textContent = formatTime(timeRemaining);
-                showSection(sections.success);
-            } else {
-                showSection(sections.failure);
-            }
-        }
-        
-        function restartGame() {
-            timeRemaining = TOTAL_TIME;
-            currentPuzzle = 0;
-            hintsUsed = 0;
-            gameStarted = false;
-            
-            // Reset inputs
-            Object.values(inputs).forEach(input => input.value = '');
-            
-            // Reset feedback
-            Object.values(feedbacks).forEach(feedback => feedback.classList.add('hidden'));
-            
-            // Reset hints
-            Object.values(hintContainers).forEach(container => container.classList.add('hidden'));
-            
-            // Reset timer
-            timer.textContent = formatTime(timeRemaining);
-            
-            // Show intro section
-            showSection(sections.intro);
-            sections.progress.classList.add('hidden');
-        }
-        
-        // Event Listeners
-        buttons.start.addEventListener('click', () => {
-            gameStarted = true;
-            timerInterval = setInterval(updateTimer, 1000);
-            sections.progress.classList.remove('hidden');
-            advanceToPuzzle(1);
-        });
-        
-        buttons.submit1.addEventListener('click', () => {
-            const input = inputs.puzzle1.value.trim();
-            if (input === SOLUTIONS.puzzle1) {
-                showFeedback(feedbacks.feedback1, true, "Richtig! Der Code ist korrekt.");
-                setTimeout(() => advanceToPuzzle(2), 1500);
-            } else {
-                showFeedback(feedbacks.feedback1, false, "Leider falsch. Überprüfe die Temperaturumrechnungen und die Reihenfolge.");
-            }
-        });
-        
-        buttons.submit2.addEventListener('click', () => {
-            const input = inputs.puzzle2.value.trim().toUpperCase();
-            if (input === SOLUTIONS.puzzle2) {
-                showFeedback(feedbacks.feedback2, true, "Richtig! Das Lösungswort ist korrekt.");
-                setTimeout(() => advanceToPuzzle(3), 1500);
-            } else {
-                showFeedback(feedbacks.feedback2, false, "Leider falsch. Überprüfe deine Antworten zu den Thermometertypen und ihrer Entwicklung.");
-            }
-        });
-        
-        buttons.submit3.addEventListener('click', () => {
-            const input = inputs.puzzle3.value.trim().toUpperCase();
-            if (input === SOLUTIONS.puzzle3) {
-                showFeedback(feedbacks.feedback3, true, "Richtig! Das Lösungswort ist korrekt.");
-                setTimeout(() => advanceToPuzzle(4), 1500);
-            } else {
-                showFeedback(feedbacks.feedback3, false, "Leider falsch. Überprüfe deine Antworten zum molekularen Modell und den Aggregatzuständen.");
-            }
-        });
-        
-        buttons.submit4.addEventListener('click', () => {
-            const input = inputs.puzzle4.value.trim();
-            if (input === SOLUTIONS.puzzle4) {
-                showFeedback(feedbacks.feedback4, true, "Richtig! Der Code ist korrekt.");
-                setTimeout(() => advanceToPuzzle(5), 1500);
-            } else {
-                showFeedback(feedbacks.feedback4, false, "Leider falsch. Überprüfe deine Berechnungen zur Wärmeausdehnung.");
-            }
-        });
-        
-        buttons.submitFinal.addEventListener('click', () => {
-            const numericInput = inputs.finalNumeric.value.trim();
-            const wordInput = inputs.finalWord.value.trim().toUpperCase();
-            
-            if (numericInput === SOLUTIONS.finalNumeric && wordInput === SOLUTIONS.finalWord) {
-                showFeedback(feedbacks.feedbackFinal, true, "Richtig! Die Kühlanlage wurde erfolgreich stabilisiert!");
-                setTimeout(() => advanceToPuzzle(6), 1500);
-            } else {
-                showFeedback(feedbacks.feedbackFinal, false, "Leider falsch. Überprüfe deine Temperaturberechnungen und das Aktivierungswort.");
-            }
-        });
-        
-        // Hint buttons
-        buttons.hint1.addEventListener('click', () => {
-            hintContainers.hint1.classList.remove('hidden');
-            applyHintPenalty();
-        });
-        
-        buttons.hint2.addEventListener('click', () => {
-            hintContainers.hint2.classList.remove('hidden');
-            applyHintPenalty();
-        });
-        
-        buttons.hint3.addEventListener('click', () => {
-            hintContainers.hint3.classList.remove('hidden');
-            applyHintPenalty();
-        });
-        
-        buttons.hint4.addEventListener('click', () => {
-            hintContainers.hint4.classList.remove('hidden');
-            applyHintPenalty();
-        });
-        
-        buttons.hintFinal.addEventListener('click', () => {
-            hintContainers.hintFinal.classList.remove('hidden');
-            applyHintPenalty();
-        });
-        
-        // Restart buttons
-        buttons.restart.addEventListener('click', restartGame);
-        buttons.restartFail.addEventListener('click', restartGame);
-        
-        // Initialize timer display
-        timer.textContent = formatTime(timeRemaining);
-    </script>
-</body>
-</html>
+        if (numericInput === SOLUTIONS.finalNumeric && wordInput === SOLUTIONS.finalWord) {  
+            showFeedback(feedbacks.feedbackFinal, true, "Richtig! Die Kühlanlage wurde erfolgreich stabilisiert!");  
+            setTimeout(() => advanceToPuzzle(6), 1500);  
+        } else {  
+            showFeedback(feedbacks.feedbackFinal, false, "Leider falsch. Überprüfe deine Temperaturberechnungen und das Aktivierungswort.");  
+        }  
+    });  
+    
+    // Hint buttons  
+    buttons.hint1.addEventListener('click', () => {  
+        hintContainers.hint1.classList.remove('hidden');  
+        applyHintPenalty();  
+    });  
+    
+    buttons.hint2.addEventListener('click', () => {  
+        hintContainers.hint2.classList.remove('hidden');  
+        applyHintPenalty();  
+    });  
+    
+    buttons.hint3.addEventListener('click', () => {  
+        hintContainers.hint3.classList.remove('hidden');  
+        applyHintPenalty();  
+    });  
+    
+    buttons.hint4.addEventListener('click', () => {  
+        hintContainers.hint4.classList.remove('hidden');  
+        applyHintPenalty();  
+    });  
+    
+    buttons.hintFinal.addEventListener('click', () => {  
+        hintContainers.hintFinal.classList.remove('hidden');  
+        applyHintPenalty();  
+    });  
+    
+    // Restart buttons  
+    buttons.restart.addEventListener('click', restartGame);  
+    buttons.restartFail.addEventListener('click', restartGame);  
+    
+    // Initialize timer display  
+    timer.textContent = formatTime(remainingTime); // Geändert von timeRemaining zu remainingTime  
+</script>
