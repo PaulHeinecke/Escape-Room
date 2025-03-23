@@ -1,19 +1,326 @@
 <!DOCTYPE html>  
-<html>  
+<html lang="de">  
 <head>  
-    <title>Test</title>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Escape Room: Vorlage</title>  
+    <style>  
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Roboto:wght@300;400;500;700&display=swap');  
+        
+        body {  
+            font-family: 'Roboto', sans-serif;  
+            background-color: #f0f2f5;  
+            margin: 0;  
+            padding: 0;  
+        }  
+        
+        header {  
+            background-color: #4f46e5;  
+            color: white;  
+            padding: 20px;  
+            text-align: center;  
+        }  
+        
+        .container {  
+            max-width: 800px;  
+            margin: 0 auto;  
+            padding: 20px;  
+        }  
+        
+        .puzzle-container {  
+            background: white;  
+            border-radius: 8px;  
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  
+            padding: 20px;  
+            margin-bottom: 20px;  
+        }  
+        
+        .professor-note {  
+            background-color: #fff9e6;  
+            border-left: 4px solid #f0c040;  
+            padding: 15px;  
+            margin-bottom: 15px;  
+            font-style: italic;  
+            font-family: 'Special Elite', cursive;  
+        }  
+        
+        .hidden {  
+            display: none;  
+        }  
+        
+        .timer {  
+            font-family: monospace;  
+            font-size: 1.5rem;  
+            font-weight: bold;  
+        }  
+        
+        button {  
+            background-color: #4f46e5;  
+            color: white;  
+            border: none;  
+            padding: 10px 15px;  
+            border-radius: 5px;  
+            cursor: pointer;  
+            margin-right: 10px;  
+            margin-top: 10px;  
+        }  
+        
+        button:hover {  
+            background-color: #4338ca;  
+        }  
+        
+        button.green {  
+            background-color: #10b981;  
+        }  
+        
+        button.green:hover {  
+            background-color: #059669;  
+        }  
+        
+        input {  
+            width: 100%;  
+            padding: 10px;  
+            margin: 10px 0;  
+            border: 1px solid #ccc;  
+            border-radius: 5px;  
+            font-size: 16px;  
+        }  
+        
+        .feedback-success {  
+            background-color: #d1fae5;  
+            color: #065f46;  
+            padding: 10px;  
+            border-radius: 5px;  
+            margin-top: 10px;  
+        }  
+        
+        .feedback-error {  
+            background-color: #fee2e2;  
+            color: #b91c1c;  
+            padding: 10px;  
+            border-radius: 5px;  
+            margin-top: 10px;  
+        }  
+        
+        .hint-container {  
+            background-color: #e0f2fe;  
+            padding: 10px;  
+            border-radius: 5px;  
+            margin-top: 15px;  
+        }  
+        
+        .timer-display {  
+            position: fixed;  
+            top: 10px;  
+            right: 10px;  
+            background-color: rgba(255, 255, 255, 0.9);  
+            padding: 10px;  
+            border-radius: 5px;  
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
+        }  
+    </style>  
 </head>  
 <body>  
-    <h1>JavaScript Test</h1>  
-    <p>Dieser Text sollte nach dem Klicken verschwinden.</p>  
-    <button id="test-button">Klick mich</button>  
-
+    <!-- Timer Display -->  
+    <div id="timer-display" class="timer-display hidden">  
+        <span>Zeit:</span>  
+        <div id="timer" class="timer">80:00</div>  
+    </div>  
+    
+    <!-- Header -->  
+    <header>  
+        <h1>Escape Room: Vorlage</h1>  
+        <p>Anpassbar für Lehrkräfte</p>  
+    </header>  
+    
+    <!-- Main Content -->  
+    <main class="container">  
+        <!-- Introduction Section -->  
+        <section id="intro" class="puzzle-container">  
+            <h2>Willkommen zum Escape Room!</h2>  
+            
+            <div class="professor-note">  
+                <p>"Hier kommt die Einführungsgeschichte. Erklären Sie den Schülerinnen und Schülern, worum es geht und was ihre Aufgabe ist!" - Lehrkraft</p>  
+            </div>  
+            
+            <p>Ihr habt <span style="font-weight: bold;">80 Minuten</span> Zeit, um den Escape Room zu lösen. Bei jedem Hinweis werden euch <span style="font-weight: bold;">5 Minuten</span> von eurer Zeit abgezogen!</p>  
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">  
+                <div>  
+                    <h3>Verbleibende Zeit:</h3>  
+                    <div id="intro-timer" class="timer">80:00</div>  
+                </div>  
+                <button id="start-game" class="green">Spiel starten</button>  
+            </div>  
+        </section>  
+        
+        <!-- Puzzle 1 -->  
+        <section id="puzzle1" class="puzzle-container hidden">  
+            <h2>Rätsel 1: Titel des ersten Rätsels</h2>  
+            
+            <div class="professor-note">  
+                <p>Die Aufgabenstellung für das erste Rätsel:</p>  
+                <p>Detaillierte Beschreibung des Rätsels...</p>  
+            </div>  
+            
+            <div>  
+                <h3>Unteraufgabe:</h3>  
+                <ul>  
+                    <li>Aufgabe 1</li>  
+                    <li>Aufgabe 2</li>  
+                    <li>Aufgabe 3</li>  
+                    <li>Aufgabe 4</li>  
+                </ul>  
+            </div>  
+            
+            <div>  
+                <p><strong>Anleitung zur Lösungseingabe...</strong></p>  
+            </div>  
+            
+            <div>  
+                <label><strong>Gib den Code ein:</strong></label>  
+                <input type="text" id="puzzle1-input" maxlength="4" placeholder="Code eingeben">  
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                    <div>  
+                        <button id="hint1-1-button">Hinweis 1 (-5 Min.)</button>  
+                        <button id="hint1-2-button" class="hidden">Hinweis 2 (-5 Min.)</button>  
+                        <button id="hint1-3-button" class="hidden">Hinweis 3 (-5 Min.)</button>  
+                    </div>  
+                    <button id="submit1-button">Prüfen</button>  
+                </div>  
+                
+                <div id="hint1-1-container" class="hint-container hidden">  
+                    <h4>Hinweis 1:</h4>  
+                    <p>Erster Hinweis zum Rätsel...</p>  
+                </div>  
+                
+                <div id="hint1-2-container" class="hint-container hidden">  
+                    <h4>Hinweis 2:</h4>  
+                    <p>Zweiter Hinweis zum Rätsel...</p>  
+                </div>  
+                
+                <div id="hint1-3-container" class="hint-container hidden">  
+                    <h4>Hinweis 3:</h4>  
+                    <p>Dritter Hinweis zum Rätsel...</p>  
+                </div>  
+                
+                <div id="feedback1" class="hidden"></div>  
+            </div>  
+        </section>  
+    </main>  
+    
     <script>  
-        // Ein einfacher Test, ob JavaScript funktioniert  
-        document.getElementById('test-button').addEventListener('click', function() {  
-            alert('JavaScript funktioniert!');  
-            document.querySelector('p').style.display = 'none';  
+        // Game Configuration  
+        const TOTAL_TIME = 80 * 60; // 80 minutes in seconds  
+        const HINT_PENALTY = 5 * 60; // 5 minutes in seconds  
+        const SOLUTION_PUZZLE1 = "1234"; // Lösungscode für Rätsel 1  
+        
+        // Game State  
+        let remainingTime = TOTAL_TIME;  
+        let timerInterval;  
+        
+        // DOM Elements  
+        const startButton = document.getElementById('start-game');  
+        const timerDisplay = document.getElementById('timer-display');  
+        const timer = document.getElementById('timer');  
+        const introTimer = document.getElementById('intro-timer');  
+        
+        const introSection = document.getElementById('intro');  
+        const puzzle1Section = document.getElementById('puzzle1');  
+        
+        const puzzle1Input = document.getElementById('puzzle1-input');  
+        const submit1Button = document.getElementById('submit1-button');  
+        const feedback1 = document.getElementById('feedback1');  
+        
+        const hint1_1Button = document.getElementById('hint1-1-button');  
+        const hint1_2Button = document.getElementById('hint1-2-button');  
+        const hint1_3Button = document.getElementById('hint1-3-button');  
+        
+        const hint1_1Container = document.getElementById('hint1-1-container');  
+        const hint1_2Container = document.getElementById('hint1-2-container');  
+        const hint1_3Container = document.getElementById('hint1-3-container');  
+        
+        // Helper Functions  
+        function formatTime(seconds) {  
+            const mins = Math.floor(seconds / 60);  
+            const secs = seconds % 60;  
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;  
+        }  
+        
+        function updateTimer() {  
+            if (remainingTime <= 0) {  
+                clearInterval(timerInterval);  
+                alert("Zeit abgelaufen! Versuche es noch einmal.");  
+                location.reload(); // Seite neu laden  
+                return;  
+            }  
+            
+            remainingTime--;  
+            timer.textContent = formatTime(remainingTime);  
+            introTimer.textContent = formatTime(remainingTime);  
+        }  
+        
+        function showFeedback(element, isCorrect, message) {  
+            element.textContent = message;  
+            element.className = isCorrect ? 'feedback-success' : 'feedback-error';  
+            element.classList.remove('hidden');  
+        }  
+        
+        function applyHintPenalty() {  
+            remainingTime -= HINT_PENALTY;  
+            if (remainingTime < 0) remainingTime = 0;  
+            timer.textContent = formatTime(remainingTime);  
+            introTimer.textContent = formatTime(remainingTime);  
+        }  
+        
+        // Event Listeners  
+        startButton.addEventListener('click', function() {  
+            // Timer starten  
+            timerInterval = setInterval(updateTimer, 1000);  
+            timerDisplay.classList.remove('hidden');  
+            
+            // Einführung ausblenden, Rätsel 1 anzeigen  
+            introSection.classList.add('hidden');  
+            puzzle1Section.classList.remove('hidden');  
         });  
+        
+        // Rätsel 1 Überprüfung  
+        submit1Button.addEventListener('click', function() {  
+            const input = puzzle1Input.value.trim();  
+            if (input === SOLUTION_PUZZLE1) {  
+                showFeedback(feedback1, true, "Richtig! Der Code ist korrekt.");  
+                
+                // In einer vollständigen Version würden wir hier zum nächsten Rätsel weiterleiten  
+                setTimeout(() => {  
+                    alert("Gratulation! Du hast das erste Rätsel gelöst. In der vollständigen Version würdest du zum nächsten Rätsel weitergeleitet werden.");  
+                }, 1500);  
+            } else {  
+                showFeedback(feedback1, false, "Leider falsch. Versuche es noch einmal.");  
+            }  
+        });  
+        
+        // Hinweis-Buttons  
+        hint1_1Button.addEventListener('click', function() {  
+            hint1_1Container.classList.remove('hidden');  
+            hint1_2Button.classList.remove('hidden');  
+            applyHintPenalty();  
+        });  
+        
+        hint1_2Button.addEventListener('click', function() {  
+            hint1_2Container.classList.remove('hidden');  
+            hint1_3Button.classList.remove('hidden');  
+            applyHintPenalty();  
+        });  
+        
+        hint1_3Button.addEventListener('click', function() {  
+            hint1_3Container.classList.remove('hidden');  
+            applyHintPenalty();  
+        });  
+        
+        // Timer initialisieren  
+        timer.textContent = formatTime(remainingTime);  
+        introTimer.textContent = formatTime(remainingTime);  
     </script>  
 </body>  
 </html>
