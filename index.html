@@ -1,0 +1,1689 @@
+<!DOCTYPE html>  
+<html lang="de">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Escape Room: Professor Wärmers Thermolabor</title>  
+    <style>  
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Roboto:wght@300;400;500;700&display=swap');  
+        
+        body {  
+            font-family: 'Roboto', sans-serif;  
+            background-color: #f0f2f5;  
+            margin: 0;  
+            padding: 0;  
+            color: #333;  
+        }  
+        
+        header {  
+            background-color: #4f46e5;  
+            color: white;  
+            padding: 20px;  
+            text-align: center;  
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
+        }  
+        
+        .container {  
+            max-width: 800px;  
+            margin: 0 auto;  
+            padding: 20px;  
+        }  
+        
+        .puzzle-container {  
+            background: white;  
+            border-radius: 8px;  
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  
+            padding: 25px;  
+            margin-bottom: 25px;  
+        }  
+        
+        .professor-note {  
+            background-color: #fff9e6;  
+            border-left: 4px solid #f0c040;  
+            padding: 15px;  
+            margin-bottom: 20px;  
+            font-style: italic;  
+            font-family: 'Special Elite', cursive;  
+        }  
+        
+        .hidden {  
+            display: none;  
+        }  
+        
+        .timer {  
+            font-family: monospace;  
+            font-size: 1.5rem;  
+            font-weight: bold;  
+        }  
+        
+        button {  
+            background-color: #4f46e5;  
+            color: white;  
+            border: none;  
+            padding: 10px 18px;  
+            border-radius: 5px;  
+            cursor: pointer;  
+            margin-right: 10px;  
+            margin-top: 10px;  
+            font-weight: 500;  
+            transition: background-color 0.2s;  
+        }  
+        
+        button:hover {  
+            background-color: #4338ca;  
+        }  
+        
+        button.green {  
+            background-color: #10b981;  
+        }  
+        
+        button.green:hover {  
+            background-color: #059669;  
+        }  
+        
+        button.disabled {  
+            background-color: #9ca3af;  
+            cursor: not-allowed;  
+        }  
+        
+        button.disabled:hover {  
+            background-color: #9ca3af;  
+        }  
+        
+        input {  
+            width: 100%;  
+            padding: 12px;  
+            margin: 10px 0;  
+            border: 1px solid #ddd;  
+            border-radius: 5px;  
+            font-size: 16px;  
+            box-sizing: border-box;  
+            transition: border-color 0.2s;  
+        }  
+        
+        input:focus {  
+            border-color: #4f46e5;  
+            outline: none;  
+        }  
+        
+        .code-input {  
+            letter-spacing: 0.5em;  
+            text-align: center;  
+            font-weight: bold;  
+            font-size: 18px;  
+        }  
+        
+        .feedback-success {  
+            background-color: #d1fae5;  
+            color: #065f46;  
+            padding: 12px;  
+            border-radius: 5px;  
+            margin-top: 15px;  
+        }  
+        
+        .feedback-error {  
+            background-color: #fee2e2;  
+            color: #b91c1c;  
+            padding: 12px;  
+            border-radius: 5px;  
+            margin-top: 15px;  
+        }  
+        
+        .hint-container {  
+            background-color: #e0f2fe;  
+            padding: 15px;  
+            border-radius: 5px;  
+            margin-top: 15px;  
+        }  
+        
+        .timer-display {  
+            position: fixed;  
+            top: 15px;  
+            right: 15px;  
+            background-color: rgba(255, 255, 255, 0.95);  
+            padding: 10px 15px;  
+            border-radius: 8px;  
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);  
+            z-index: 1000;  
+        }  
+        
+        /* Progress Bar Styles */  
+        .progress-container {  
+            width: 100%;  
+            height: 12px;  
+            background-color: #e5e7eb;  
+            border-radius: 6px;  
+            margin: 20px 0;  
+            overflow: hidden;  
+        }  
+        
+        .progress-bar {  
+            height: 100%;  
+            background-color: #4f46e5;  
+            border-radius: 6px;  
+            width: 0%;  
+            transition: width 0.5s ease;  
+        }  
+        
+        .progress-labels {  
+            display: flex;  
+            justify-content: space-between;  
+            margin-top: 5px;  
+            font-size: 0.8rem;  
+            color: #6b7280;  
+        }  
+        
+        h2 {  
+            color: #4f46e5;  
+            margin-top: 0;  
+        }  
+        
+        h3 {  
+            color: #374151;  
+        }  
+        
+        ul {  
+            padding-left: 20px;  
+        }  
+        
+        ul li {  
+            margin-bottom: 8px;  
+        }  
+        
+        .puzzle-part {  
+            border: 1px solid #e5e7eb;  
+            border-radius: 5px;  
+            padding: 15px;  
+            margin-bottom: 15px;  
+            background-color: #f9fafb;  
+        }  
+        
+        .checkbox-group {  
+            margin: 10px 0;  
+        }  
+        
+        .checkbox-container {  
+            display: flex;  
+            align-items: center;  
+            margin-bottom: 8px;  
+        }  
+        
+        .checkbox-container input[type="checkbox"] {  
+            width: auto;  
+            margin-right: 10px;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <!-- Timer Display -->  
+    <div id="timer-display" class="timer-display hidden">  
+        <span>Zeit:</span>  
+        <div id="timer" class="timer">80:00</div>  
+    </div>  
+    
+    <!-- Header -->  
+    <header>  
+        <h1>Escape Room: Professor Wärmers Thermolabor</h1>  
+        <p>Eine Reise durch die Welt der Temperatur und Wärme</p>  
+    </header>  
+    
+    <!-- Main Content -->  
+    <main class="container">
+        <!-- Introduction Section -->  
+        <section id="intro" class="puzzle-container">  
+            <h2>Willkommen im Labor von Professor Wärmer!</h2>  
+            
+            <div class="professor-note">  
+                <p>"Willkommen in meinem Labor, junge Forscher! Ich bin Professor Wärmer, ein bekannter Physiker im Bereich der Wärmelehre. Leider bin ich bei einem meiner Experimente in einer Kältekammer eingeschlossen worden, und die Temperatur sinkt rapide! Ihr müsst eine Reihe von Rätseln lösen, die mit Temperatur und Wärme zu tun haben, um mich zu befreien. Jede Minute zählt!"</p>  
+            </div>  
+            
+            <p>Ihr habt <span style="font-weight: bold;">80 Minuten</span> Zeit, um den Escape Room zu lösen. Bei Hinweis 1 werden euch <span style="font-weight: bold;">1 Minute</span>, bei Hinweis 2 <span style="font-weight: bold;">2 Minuten</span> usw. von eurer Zeit abgezogen!</p>  
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">  
+                <div>  
+                    <h3>Verbleibende Zeit:</h3>  
+                    <div id="intro-timer" class="timer">80:00</div>  
+                </div>  
+                <button id="start-game" class="green">Spiel starten</button>  
+            </div>  
+        </section>  
+        
+        <!-- Progress Bar (erscheint nach Spielbeginn) -->  
+        <section id="progress-section" class="puzzle-container hidden">  
+            <h3>Fortschritt:</h3>  
+            <div class="progress-container">  
+                <div id="progress-bar" class="progress-bar"></div>  
+            </div>  
+            <div class="progress-labels">  
+                <span>Start</span>  
+                <span>Rätsel 1</span>  
+                <span>Rätsel 2</span>  
+                <span>Rätsel 3</span>  
+                <span>Rätsel 4</span>  
+                <span>Final</span>  
+                <span>Ende</span>  
+            </div>  
+        </section>  
+        
+        <!-- Puzzle 1 -->  
+        <section id="puzzle1" class="puzzle-container hidden">  
+            <h2>Rätsel 1: Die geheime Formel</h2>  
+            
+            <div class="professor-note">  
+                <p>Um die Kältekammer zu entriegeln, benötigt ihr einen vierstelligen Code. Der Code besteht aus den ersten Ziffern von wichtigen Temperaturwerten. Berechnet die Werte und ermittelt den Code!</p>  
+                <p>Folgende Temperaturen sind in dieser Reihenfolge gefragt:</p>  
+                <ol>  
+                    <li>Die erste Ziffer der menschlichen Körpertemperatur in Celsius</li>  
+                    <li>Die erste Ziffer der optimalen Kühlschranktemperatur in Celsius</li>  
+                    <li>Die erste Ziffer des Siedepunkts von Wasser in Kelvin</li>  
+                    <li>Die erste Ziffer der Temperatur, bei der Celsius und Fahrenheit übereinstimmen</li>  
+                </ol>  
+            </div>  
+            
+            <div>  
+                <label><strong>Gib den vierstelligen Code ein:</strong></label>  
+                <input type="text" id="puzzle1-input" maxlength="4" class="code-input" placeholder="Code eingeben">  
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                    <div>  
+                        <button id="hint1-1-button">Hinweis 1 (-1 Min.)</button>  
+                        <button id="hint1-2-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                        <button id="hint1-3-button" class="hidden">Hinweis 3 (-3 Min.)</button>  
+                    </div>  
+                    <button id="submit1-button">Prüfen</button>  
+                </div>  
+                
+                <div id="hint1-1-container" class="hint-container hidden">  
+                    <h4>Hinweis 1:</h4>  
+                    <p>Schaut euch das Whiteboard im Raum an! Dort findet ihr alle Umrechnungsformeln für die verschiedenen Temperatureinheiten.</p>  
+                </div>  
+                
+                <div id="hint1-2-container" class="hint-container hidden">  
+                    <h4>Hinweis 2:</h4>  
+                    <p>Auf dem Whiteboard stehen die Formeln mit Beispielen:</p>  
+                    <ul>  
+                        <li>Celsius zu Kelvin: K = °C + 273,15 (Beispiel: 20°C = 293,15 K)</li>  
+                        <li>Celsius zu Fahrenheit: °F = (°C × 9/5) + 32 (Beispiel: 20°C = 68°F)</li>  
+                        <li>Kelvin zu Celsius: °C = K - 273,15 (Beispiel: 293,15 K = 20°C)</li>  
+                        <li>Fahrenheit zu Celsius: °C = (°F - 32) × 5/9 (Beispiel: 68°F = 20°C)</li>  
+                    </ul>  
+                </div>  
+                
+                <div id="hint1-3-container" class="hint-container hidden">  
+                    <h4>Hinweis 3:</h4>  
+                    <p>Die Reihenfolge laut Aufgabe ist: Körpertemperatur (37°C), Kühlschrank (5°C), Siedepunkt von Wasser (373,15 K), Temperatur, bei der Celsius und Fahrenheit übereinstimmen (-40°F). Denkt an die ersten Ziffern jedes Ergebnisses!</p>  
+                </div>  
+                
+                <div id="feedback1" class="hidden"></div>  
+            </div>  
+        </section>
+        <!-- Puzzle 2 -->  
+        <section id="puzzle2" class="puzzle-container hidden">  
+            <h2>Rätsel 2: Die geheime Erfindung</h2>  
+            
+            <div class="professor-note">  
+                <p>Sehr gut! Ihr habt den ersten Code geknackt. Um die Kältekammer weiter zu entriegeln, müsst ihr nun meine geheime Erfindung identifizieren. Löst dazu die folgenden Aufgaben.</p>  
+            </div>  
+            
+            <!-- Teil 1 des zweiten Rätsels -->  
+            <div class="puzzle-part">  
+                <h3>Aufgabe 1: Die Geschichte der Temperaturmessung</h3>  
+                <p>An der Tafel seht ihr Bilder verschiedener Thermometertypen. Ordnet sie chronologisch und sammelt die zugehörigen Codes.</p>  
+                
+                <div>  
+                    <p>Hier sind die Bilder:</p>  
+                    <ul>  
+                        <li>A) Quecksilberthermometer (erfunden von Fahrenheit)</li>  
+                        <li>B) Galileos Thermoskop</li>  
+                        <li>C) Celsius-Skala</li>  
+                        <li>D) Infrarot-Thermometer</li>  
+                        <li>E) Kelvin-Skala</li>  
+                    </ul>  
+                    
+                    <label><strong>Gib den Code ein (fünfstellig):</strong></label>  
+                    <input type="text" id="puzzle2-part1-input" class="code-input" placeholder="Code eingeben">  
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                        <div>  
+                            <button id="hint2-1-button">Hinweis 1 (-1 Min.)</button>  
+                            <button id="hint2-2-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                        </div>  
+                        <button id="submit2-part1-button">Prüfen</button>  
+                    </div>  
+                    
+                    <div id="hint2-1-container" class="hint-container hidden">  
+                        <h4>Hinweis 1:</h4>  
+                        <p>Schaut euch die Thermometer-Abbildungen an der Tafel genau an! Beachtet die Details auf den Thermometerskalen.</p>  
+                    </div>  
+                    
+                    <div id="hint2-2-container" class="hint-container hidden">  
+                        <h4>Hinweis 2:</h4>  
+                        <p>Die chronologische Reihenfolge der Thermometer mit ihren Codes ist:</p>  
+                        <ul>  
+                            <li>B) Galileos Thermoskop - 7</li>  
+                            <li>A) Quecksilberthermometer von Fahrenheit - 5</li>  
+                            <li>C) Celsius-Skala - 2</li>  
+                            <li>E) Kelvin-Skala - 3</li>  
+                            <li>D) Infrarot-Thermometer - 9</li>  
+                        </ul>  
+                    </div>  
+                    
+                    <div id="feedback2-part1" class="hidden"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Teil 2 des zweiten Rätsels (erscheint nach Lösung von Teil 1) -->  
+            <div id="puzzle2-part2" class="puzzle-part hidden">  
+                <h3>Aufgabe 2: Der Arbeitsplatz</h3>  
+                <p>Wo befindet sich die geheime Erfindung? Findet den wissenschaftlichen Arbeitsplatz (5 Buchstaben).</p>  
+                
+                <div>  
+                    <label><strong>Gib das Lösungswort ein:</strong></label>  
+                    <input type="text" id="puzzle2-part2-input" placeholder="Lösungswort eingeben">  
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                        <div>  
+                            <button id="hint2-3-button">Hinweis 1 (-1 Min.)</button>  
+                            <button id="hint2-4-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                        </div>  
+                        <button id="submit2-part2-button">Prüfen</button>  
+                    </div>  
+                    
+                    <div id="hint2-3-container" class="hint-container hidden">  
+                        <h4>Hinweis 1:</h4>  
+                        <p>Vergleiche die verschiedenen Thermometertypen und ihre Funktionsprinzipien. Welche Thermometertypen gibt es?</p>  
+                    </div>  
+                    
+                    <div id="hint2-4-container" class="hint-container hidden">  
+                        <h4>Hinweis 2:</h4>  
+                        <p>Das gesuchte Wort bezeichnet einen wissenschaftlichen Arbeitsplatz mit fünf Buchstaben. In diesem Raum befindet sich der Professor häufig.</p>  
+                    </div>  
+                    
+                    <div id="feedback2-part2" class="hidden"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Teil 3 des zweiten Rätsels (erscheint nach Lösung von Teil 2) -->  
+            <div id="puzzle2-part3" class="puzzle-part hidden">  
+                <h3>Aufgabe 3: Die Temperatursortierung</h3>  
+                <p>Welcher Buchstabe steht für die höchste Temperatur?</p>  
+                <ul>  
+                    <li>A: 50°C</li>  
+                    <li>B: 80°F</li>  
+                    <li>C: 300 K</li>  
+                    <li>D: 20°C</li>  
+                    <li>E: 95°F</li>  
+                    <li>F: 290 K</li>  
+                    <li>G: 100°F</li>  
+                    <li>H: 60°C</li>  
+                </ul>  
+                
+                <div>  
+                    <label><strong>Gib den Buchstaben der höchsten Temperatur ein:</strong></label>  
+                    <input type="text" id="puzzle2-part3-input" placeholder="Buchstabe eingeben" maxlength="1">  
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                        <div>  
+                            <button id="hint2-5-button">Hinweis 1 (-1 Min.)</button>  
+                            <button id="hint2-6-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                        </div>  
+                        <button id="submit2-part3-button">Prüfen</button>  
+                    </div>  
+                    
+                    <div id="hint2-5-container" class="hint-container hidden">  
+                        <h4>Hinweis 1:</h4>  
+                        <p>Berechne die Temperaturen sorgfältig und achte auf die Einheiten.</p>  
+                    </div>  
+                    
+                    <div id="hint2-6-container" class="hint-container hidden">  
+                        <h4>Hinweis 2:</h4>  
+                        <p>Nachdem du alle Werte berechnet hast, sortiere sie der Größe nach und identifiziere den größten Wert.</p>  
+                    </div>  
+                    
+                    <div id="feedback2-part3" class="hidden"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Teil 4 des zweiten Rätsels (erscheint nach Lösung von Teil 3) -->  
+            <div id="puzzle2-part4" class="puzzle-part hidden">  
+                <h3>Aufgabe 4: Das Labormöbel</h3>  
+                <p>Wo wird die Erfindung aufbewahrt? Findet das Labormöbel (7 Buchstaben).</p>  
+                
+                <div>  
+                    <label><strong>Gib das Lösungswort ein:</strong></label>  
+                    <input type="text" id="puzzle2-part4-input" placeholder="Lösungswort eingeben">  
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                        <div>  
+                            <button id="hint2-7-button">Hinweis 1 (-1 Min.)</button>  
+                            <button id="hint2-8-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                        </div>  
+                        <button id="submit2-part4-button">Prüfen</button>  
+                    </div>  
+                    
+                    <div id="hint2-7-container" class="hint-container hidden">  
+                        <h4>Hinweis 1:</h4>  
+                        <p>Das Wort hat etwas mit der Lagerung von Chemikalien oder Labormaterialien zu tun.</p>  
+                    </div>  
+                    
+                    <div id="hint2-8-container" class="hint-container hidden">  
+                        <h4>Hinweis 2:</h4>  
+                        <p>Es ist ein Möbelstück mit sieben Buchstaben, das sich oft in Laboren befindet.</p>  
+                    </div>  
+                    
+                    <div id="feedback2-part4" class="hidden"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Gesamtlösung für Rätsel 2 (erscheint nach Lösung aller Teile) -->  
+            <div id="puzzle2-final" class="hidden" style="margin-top: 20px; border: 2px solid #4f46e5; padding: 20px; border-radius: 8px; background-color: #f5f3ff;">  
+                <h3 style="color: #4f46e5;">Die geheime Erfindung</h3>  
+                <p>Ihr habt alle Teile gelöst! Gebt die Wortkombination ein, die beschreibt, wo sich die Erfindung befindet (Code + Standort).</p>  
+                
+                <label><strong>Gib die komplette Lösung ein:</strong></label>  
+                <input type="text" id="puzzle2-input" class="code-input" placeholder="Zuerst Code, dann Standort">  
+                
+                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">  
+                    <button id="submit2-button">Prüfen</button>  
+                </div>  
+                
+                <div id="feedback2" class="hidden"></div>  
+            </div>  
+        </section>
+        <!-- Puzzle 3 -->  
+        <section id="puzzle3" class="puzzle-container hidden">  
+            <h2>Rätsel 3: Das molekulare Rätsel</h2>  
+            
+            <div class="professor-note">  
+                <p>Hervorragend! Ihr habt meine geheime Erfindung gefunden. Um sie zu aktivieren, müsst ihr euer Wissen über die Teilchentheorie und Aggregatzustände beweisen.</p>  
+            </div>  
+            
+            <!-- Teil 1 des dritten Rätsels -->  
+            <div class="puzzle-part">  
+                <h3>Aufgabe 1: Die kinetische Gastheorie</h3>  
+                <p>Welche der folgenden Aussagen sind richtig? Markiert alle zutreffenden Aussagen:</p>  
+                
+                <div class="checkbox-group">  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-A">   
+                        <label for="theory-A">A: Teilchen können sich mit einer konstanten Geschwindigkeit bewegen.</label>  
+                    </div>  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-C">   
+                        <label for="theory-C">C: Die Teilchen sind in ständiger, ungeordneter Bewegung.</label>  
+                    </div>  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-E">   
+                        <label for="theory-E">E: Die Teilchen sind sehr klein im Vergleich zum Abstand zwischen ihnen.</label>  
+                    </div>  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-H">   
+                        <label for="theory-H">H: Die Teilchen üben Kräfte aufeinander aus.</label>  
+                    </div>  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-I">   
+                        <label for="theory-I">I: Die Teilchen sind in einem idealen Gas praktisch punktförmig.</label>  
+                    </div>  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-L">   
+                        <label for="theory-L">L: Die Teilchen haben eine Eigenmasse.</label>  
+                    </div>  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-N">   
+                        <label for="theory-N">N: Die Anzahl der Teilchen bleibt bei Temperatur- und Druckänderungen konstant.</label>  
+                    </div>  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-P">   
+                        <label for="theory-P">P: Die Teilchen sind vollkommen regelmäßig angeordnet.</label>  
+                    </div>  
+                    <div class="checkbox-container">  
+                        <input type="checkbox" id="theory-T">   
+                        <label for="theory-T">T: Die Teilchen führen Stöße miteinander aus.</label>  
+                    </div>  
+                </div>  
+                
+                <label><strong>Gib das Lösungswort ein (die Buchstaben der richtigen Aussagen in der richtigen Reihenfolge):</strong></label>  
+                <input type="text" id="puzzle3-part1-input" placeholder="Lösungswort eingeben">  
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                    <div>  
+                        <button id="hint3-1-button">Hinweis 1 (-1 Min.)</button>  
+                        <button id="hint3-2-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                        <button id="hint3-3-button" class="hidden">Hinweis 3 (-3 Min.)</button>  
+                    </div>  
+                    <button id="submit3-part1-button">Prüfen</button>  
+                </div>  
+                
+                <div id="hint3-1-container" class="hint-container hidden">  
+                    <h4>Hinweis 1:</h4>  
+                    <p>Überlegt euch bei den Aussagen genau, was ihr über die kinetische Gastheorie wisst. Einige Aussagen sind Fehlvorstellungen.</p>  
+                </div>  
+                
+                <div id="hint3-2-container" class="hint-container hidden">  
+                    <h4>Hinweis 2:</h4>  
+                    <p>Achtet besonders auf Aussagen über die Teilchengröße, geordnete Bewegungen und die Veränderung der Teilchenzahl.</p>  
+                </div>  
+                
+                <div id="hint3-3-container" class="hint-container hidden">  
+                    <h4>Hinweis 3:</h4>  
+                    <p>Die Buchstaben der richtigen Aussagen in der korrekten Reihenfolge lauten: E, H, N, L, C, T, I</p>  
+                </div>  
+                
+                <div id="feedback3-part1" class="hidden"></div>  
+            </div>  
+            
+            <!-- Teil 2 des dritten Rätsels (erscheint nach Lösung von Teil 1) -->  
+            <div id="puzzle3-part2" class="puzzle-part hidden">  
+                <h3>Aufgabe 2: Die Aggregatzustandsänderungen</h3>  
+                <p>Welcher Begriff fehlt im Schema der Aggregatzustandsänderungen?</p>  
+                
+                <div style="text-align: center; margin: 20px 0;">  
+                    <div style="border: 1px solid #ccc; padding: 10px; display: inline-block;">  
+                        <p><strong>Fest</strong> ⟷ <strong>Flüssig</strong> ⟷ <strong>Gasförmig</strong></p>  
+                        <p>↑ Schmelzen ↓ Erstarren</p>  
+                        <p>↑ Verdampfen ↓ Kondensieren</p>  
+                        <p>↗ Sublimieren ↙ ?</p>  
+                    </div>  
+                </div>  
+                
+                <div>  
+                    <label><strong>Gib das fehlende Wort ein:</strong></label>  
+                    <input type="text" id="puzzle3-part2-input" placeholder="Fehlendes Wort eingeben">  
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                        <div>  
+                            <button id="hint3-4-button">Hinweis 1 (-1 Min.)</button>  
+                            <button id="hint3-5-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                        </div>  
+                        <button id="submit3-part2-button">Prüfen</button>  
+                    </div>  
+                    
+                    <div id="hint3-4-container" class="hint-container hidden">  
+                        <h4>Hinweis 1:</h4>  
+                        <p>Beim gesuchten Begriff handelt es sich um einen Aggregatzustandswechsel.</p>  
+                    </div>  
+                    
+                    <div id="hint3-5-container" class="hint-container hidden">  
+                        <h4>Hinweis 2:</h4>  
+                        <p>Die Begriffe 'gasförmig, flüssig, schmelzen, sieden, erstarren, sublimieren' beschreiben verschiedene Aggregatzustandsänderungen. Überlege, welcher Prozess im Schema fehlt.</p>  
+                    </div>  
+                    
+                    <div id="feedback3-part2" class="hidden"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Gesamtlösung für Rätsel 3 (erscheint nach Lösung beider Teile) -->  
+            <div id="puzzle3-final" class="hidden" style="margin-top: 20px; border: 2px solid #4f46e5; padding: 20px; border-radius: 8px; background-color: #f5f3ff;">  
+                <h3 style="color: #4f46e5;">Das molekulare Verständnis</h3>  
+                <p>Hervorragend! Ihr versteht die grundlegenden Konzepte der Teilchentheorie und der Aggregatzustände.</p>  
+                
+                <div style="text-align: center; margin-top: 15px;">  
+                    <button id="to-puzzle4-button" class="green">Weiter zu Rätsel 4</button>  
+                </div>  
+            </div>  
+        </section>  
+        
+        <!-- Puzzle 4 -->  
+        <section id="puzzle4" class="puzzle-container hidden">  
+            <h2>Rätsel 4: Die Welt der Wärmeausdehnung</h2>  
+            
+            <div class="professor-note">  
+                <p>Nur noch zwei Rätsel trennen euch von meiner Rettung! Jetzt geht es um Wärmeausdehnung, ein faszinierendes Phänomen der Thermodynamik.</p>  
+            </div>  
+            
+            <!-- Teil 1 des vierten Rätsels -->  
+            <div class="puzzle-part">  
+                <h3>Aufgabe 1: Die Metalle im Periodensystem</h3>  
+                <p>Welche der folgenden Metalle befinden sich in einer Hauptgruppe im Periodensystem?</p>  
+                <ul>  
+                    <li>Kupfer (Cu)</li>  
+                    <li>Eisen (Fe)</li>  
+                    <li>Aluminium (Al)</li>  
+                    <li>Blei (Pb)</li>  
+                    <li>Zinn (Sn)</li>  
+                </ul>  
+                <p>Addiere die Ordnungszahlen der Hauptgruppenelemente und gib das Ergebnis ein.</p>  
+                
+                <div>  
+                    <label><strong>Gib die Zahl ein:</strong></label>  
+                    <input type="text" id="puzzle4-part1-input" placeholder="Summe der Ordnungszahlen">  
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                        <div>  
+                            <button id="hint4-1-button">Hinweis 1 (-1 Min.)</button>  
+                            <button id="hint4-2-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                            <button id="hint4-3-button" class="hidden">Hinweis 3 (-3 Min.)</button>  
+                        </div>  
+                        <button id="submit4-part1-button">Prüfen</button>  
+                    </div>  
+                    
+                    <div id="hint4-1-container" class="hint-container hidden">  
+                        <h4>Hinweis 1:</h4>  
+                        <p>Es gibt ein Periodensystem im Raum. Schaut es euch an und findet heraus, welche der genannten Metalle in einer Hauptgruppe stehen.</p>  
+                    </div>  
+                    
+                    <div id="hint4-2-container" class="hint-container hidden">  
+                        <h4>Hinweis 2:</h4>  
+                        <p>Hauptgruppen und Nebengruppen im Periodensystem:</p>  
+                        <ul>  
+                            <li>Hauptgruppen sind die Gruppen 1, 2 und 13-18. Elemente in diesen Gruppen werden als Hauptgruppenelemente bezeichnet.</li>  
+                            <li>Nebengruppen sind die Gruppen 3-12. Elemente in diesen Gruppen werden als Übergangsmetalle bezeichnet.</li>  
+                        </ul>  
+                        <p>Schaut nach, in welchen Gruppen Kupfer, Eisen, Aluminium, Blei und Zinn stehen.</p>  
+                    </div>  
+                    
+                    <div id="hint4-3-container" class="hint-container hidden">  
+                        <h4>Hinweis 3:</h4>  
+                        <p>Von den genannten Metallen befinden sich drei in einer Hauptgruppe. Addiere deren Nummern.</p>  
+                    </div>  
+                    
+                    <div id="feedback4-part1" class="hidden"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Teil 2 des vierten Rätsels (erscheint nach Lösung von Teil 1) -->  
+            <div id="puzzle4-part2" class="puzzle-part hidden">  
+                <h3>Aufgabe 2: Die Eisenbrücke</h3>  
+                <p>Eine 200 m lange Eisenbrücke hat bei 15°C (288 K) keine Dehnungsfugen. An einem heißen Sommertag steigt die Temperatur auf 35°C (308 K).</p>  
+                <p>Um wie viele Millimeter dehnt sich die Brücke aus? Der lineare Ausdehnungskoeffizient von Eisen beträgt 0,000012 K⁻¹.</p>  
+                
+                <div>  
+                    <label><strong>Gib das Ergebnis ein (nur die Zahl):</strong></label>  
+                    <input type="text" id="puzzle4-part2-input" placeholder="Längenänderung in mm">  
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                        <div>  
+                            <button id="hint4-4-button">Hinweis 1 (-1 Min.)</button>  
+                            <button id="hint4-5-button" class="hidden">Hinweis 2 (-2 Min.)</button>  
+                            <button id="hint4-6-button" class="hidden">Hinweis 3 (-3 Min.)</button>  
+                        </div>  
+                        <button id="submit4-part2-button">Prüfen</button>  
+                    </div>  
+                    
+                    <div id="hint4-4-container" class="hint-container hidden">  
+                        <h4>Hinweis 1:</h4>  
+                        <p>Nutze die Formel für die Längenänderung: ΔL = L₀ × α × ΔT</p>  
+                    </div>  
+                    
+                    <div id="hint4-5-container" class="hint-container hidden">  
+                        <h4>Hinweis 2:</h4>  
+                        <p>Berechne zuerst die Temperaturdifferenz: ΔT = 308 K - 288 K = 20 K, und setze dann die Werte in die Formel ein.</p>  
+                    </div>  
+                    
+                    <div id="hint4-6-container" class="hint-container hidden">  
+                        <h4>Hinweis 3:</h4>  
+                        <p>Denk daran, das Ergebnis in mm umzurechnen. 1 m = 1000 mm. Der lineare Ausdehnungskoeffizient von Eisen beträgt 0,000012 K⁻¹.</p>  
+                    </div>  
+                    
+                    <div id="feedback4-part2" class="hidden"></div>  
+                </div>  
+            </div>  
+            
+            <!-- Gesamtlösung für Rätsel 4 (erscheint nach Lösung beider Teile) -->  
+            <div id="puzzle4-final" class="hidden" style="margin-top: 20px; border: 2px solid #4f46e5; padding: 20px; border-radius: 8px; background-color: #f5f3ff;">  
+                <h3 style="color: #4f46e5;">Der Wärmeausdehnungscode</h3>  
+                <p>Gut gemacht! Ihr habt beide Teile des vierten Rätsels gelöst. Die Teillösungen ergeben zusammen einen wichtigen Code.</p>  
+                
+                <div>  
+                    <label><strong>Gib den vollständigen Code ein (die beiden Zahlen zusammen):</strong></label>  
+                    <input type="text" id="puzzle4-input" class="code-input" placeholder="Code eingeben">  
+                    
+                    <div style="text-align: right; margin-top: 10px;">  
+                        <button id="submit4-button">Prüfen</button>  
+                    </div>  
+                    
+                    <div id="feedback4" class="hidden"></div>  
+                </div>  
+            </div>  
+        </section>
+        <!-- Final Puzzle -->  
+        <section id="puzzle-final" class="puzzle-container hidden">  
+            <h2>Finale Rätsel: Die Rettung</h2>  
+            
+            <div class="professor-note">  
+                <p>"Fast geschafft! Um mich endgültig zu befreien, müsst ihr alle gesammelten Informationen kombinieren. Die Kältekammer hat ein spezielles Schloss, das alle Codes und Lösungswörter benötigt!"</p>  
+            </div>  
+            
+            <div>  
+                <p>Fasst alle bisherigen Ergebnisse zusammen und aktiviert das Notfallsystem:</p>  
+                
+                <ul>  
+                    <li>Code aus Rätsel 1: <span class="code-result" id="result1-display">????</span></li>  
+                    <li>Lösung aus Rätsel 2: <span class="code-result" id="result2-display">????????????</span></li>  
+                    <li>Lösung aus Rätsel 3: <span class="code-result" id="result3-display">TEILCHEN + ????????</span></li>  
+                    <li>Code aus Rätsel 4: <span class="code-result" id="result4-display">??</span></li>  
+                </ul>  
+                
+                <div>  
+                    <label><strong>Gib den finalen Aktivierungscode ein:</strong></label>  
+                    <input type="text" id="final-input" class="code-input" placeholder="Code eingeben">  
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">  
+                        <div>  
+                            <button id="hint-final-button">Hinweis (-1 Min.)</button>  
+                        </div>  
+                        <button id="submit-final-button">Aktivieren</button>  
+                    </div>  
+                    
+                    <div id="hint-final-container" class="hint-container hidden">  
+                        <h4>Hinweis:</h4>  
+                        <p>Der finale Code besteht aus dem Code aus Rätsel 1, gefolgt vom Code aus Rätsel 4.</p>  
+                    </div>  
+                    
+                    <div id="feedback-final" class="hidden"></div>  
+                </div>  
+            </div>  
+        </section>  
+        
+        <!-- Success Screen -->  
+        <section id="success-screen" class="puzzle-container hidden" style="background-color: #ecfdf5; border: 2px solid #10b981;">  
+            <h2 style="color: #059669; text-align: center; font-size: 2rem;">Herzlichen Glückwunsch!</h2>  
+            
+            <div style="text-align: center; margin: 20px 0;">  
+                <p style="font-size: 1.2rem;">Ihr habt den Escape Room erfolgreich gelöst und Professor Wärmer befreit!</p>  
+                <p style="margin-top: 10px;">Verbleibende Zeit: <span id="time-remaining" class="timer" style="color: #059669;"></span></p>  
+            </div>  
+            
+            <div class="professor-note">  
+                <p>"Vielen Dank für eure Hilfe! Ohne euch wäre ich in der Kältekammer erfroren. Ihr habt bewiesen, dass ihr nicht nur thermodynamische Prinzipien versteht, sondern auch unter Druck kluge Entscheidungen treffen könnt. Ich bin beeindruckt von eurem Wissen über Temperatur und Wärme!"</p>  
+            </div>  
+            
+            <div style="text-align: center; margin-top: 30px;">  
+                <button id="restart-button" class="green" style="font-size: 1.1rem; padding: 12px 24px;">Neu starten</button>  
+            </div>  
+        </section>  
+        
+        <!-- Failure Screen -->  
+        <section id="failure-screen" class="puzzle-container hidden" style="background-color: #fef2f2; border: 2px solid #ef4444;">  
+            <h2 style="color: #b91c1c; text-align: center; font-size: 2rem;">Zeit abgelaufen!</h2>  
+            
+            <div style="text-align: center; margin: 20px 0;">  
+                <p style="font-size: 1.2rem;">Leider habt ihr es nicht rechtzeitig geschafft, Professor Wärmer zu befreien.</p>  
+                <p style="margin-top: 10px;">Versucht es noch einmal mit neuem Wissen!</p>  
+            </div>  
+            
+            <div class="professor-note">  
+                <p>"Macht euch keine Sorgen! Die Notfallsysteme haben mich im letzten Moment gerettet. Ihr wart auf dem richtigen Weg. Nutzt eure Erfahrungen und versucht es erneut - beim nächsten Mal klappt es bestimmt!"</p>  
+            </div>  
+            
+            <div style="text-align: center; margin-top: 30px;">  
+                <button id="restart-fail-button" style="background-color: #ef4444; font-size: 1.1rem; padding: 12px 24px;">Neu starten</button>  
+            </div>  
+        </section>  
+    </main>
+    <script>  
+        // Game Configuration  
+        const TOTAL_TIME = 80 * 60; // 80 minutes in seconds  
+        
+        // Lösungen  
+        const SOLUTIONS = {  
+            puzzle1: "3414", // Lösung für Rätsel 1  
+            puzzle2Part1: "75239", // Lösung für Rätsel 2, Teil 1  
+            puzzle2Part2: "LABOR", // Lösung für Rätsel 2, Teil 2  
+            puzzle2Part3: "H", // Lösung für Rätsel 2, Teil 3  
+            puzzle2Part4: "RANK", // Lösung für Rätsel 2, Teil 4  
+            puzzle2: "75239LABORSCHRANK", // Gesamtlösung für Rätsel 2  
+            puzzle3Part1: "TEILCHEN", // Lösung für Rätsel 3, Teil 1  
+            puzzle3Part2: "RESUBLIMIEREN", // Lösung für Rätsel 3, Teil 2  
+            puzzle4Part1: "22", // Lösung für Rätsel 4, Teil 1  
+            puzzle4Part2: "48", // Lösung für Rätsel 4, Teil 2  
+            puzzle4: "2248", // Gesamtlösung für Rätsel 4  
+            finalPuzzle: "341422" // Lösung für das finale Rätsel (Rätsel 1 + Rätsel 4, ohne 48)  
+        };  
+        
+        // Game State  
+        let remainingTime = TOTAL_TIME;  
+        let timerInterval;  
+        let currentPuzzle = 0; // 0: Intro, 1-5: Rätsel, 6: Success  
+        let hintsUsed = 0;  
+        let puzzle2Part1Solved = false;  
+        let puzzle2Part2Solved = false;  
+        let puzzle2Part3Solved = false;  
+        let puzzle2Part4Solved = false;  
+        let puzzle3Part1Solved = false;  
+        let puzzle3Part2Solved = false;  
+        let puzzle4Part1Solved = false;  
+        let puzzle4Part2Solved = false;  
+        
+        // DOM Elements - Intro und Timer  
+        const startButton = document.getElementById('start-game');  
+        const timerDisplay = document.getElementById('timer-display');  
+        const timer = document.getElementById('timer');  
+        const introTimer = document.getElementById('intro-timer');  
+        const progressSection = document.getElementById('progress-section');  
+        const progressBar = document.getElementById('progress-bar');  
+        
+        // DOM Elements - Sections  
+        const introSection = document.getElementById('intro');  
+        const puzzle1Section = document.getElementById('puzzle1');  
+        const puzzle2Section = document.getElementById('puzzle2');  
+        const puzzle3Section = document.getElementById('puzzle3');  
+        const puzzle4Section = document.getElementById('puzzle4');  
+        const puzzleFinalSection = document.getElementById('puzzle-final');  
+        const successScreen = document.getElementById('success-screen');  
+        const failureScreen = document.getElementById('failure-screen');  
+        
+        // DOM Elements - Puzzle 2 Subsections  
+        const puzzle2Part2 = document.getElementById('puzzle2-part2');  
+        const puzzle2Part3 = document.getElementById('puzzle2-part3');  
+        const puzzle2Part4 = document.getElementById('puzzle2-part4');  
+        const puzzle2Final = document.getElementById('puzzle2-final');  
+        
+        // DOM Elements - Puzzle 3 Subsections  
+        const puzzle3Part2 = document.getElementById('puzzle3-part2');  
+        const puzzle3Final = document.getElementById('puzzle3-final');  
+        
+        // DOM Elements - Puzzle 4 Subsections  
+        const puzzle4Part2 = document.getElementById('puzzle4-part2');  
+        const puzzle4Final = document.getElementById('puzzle4-final');  
+        
+        // DOM Elements - Inputs und Buttons  
+        const puzzle1Input = document.getElementById('puzzle1-input');  
+        const submit1Button = document.getElementById('submit1-button');  
+        
+        const puzzle2Part1Input = document.getElementById('puzzle2-part1-input');  
+        const submit2Part1Button = document.getElementById('submit2-part1-button');  
+        const puzzle2Part2Input = document.getElementById('puzzle2-part2-input');  
+        const submit2Part2Button = document.getElementById('submit2-part2-button');  
+        const puzzle2Part3Input = document.getElementById('puzzle2-part3-input');  
+        const submit2Part3Button = document.getElementById('submit2-part3-button');  
+        const puzzle2Part4Input = document.getElementById('puzzle2-part4-input');  
+        const submit2Part4Button = document.getElementById('submit2-part4-button');  
+        const puzzle2Input = document.getElementById('puzzle2-input');  
+        const submit2Button = document.getElementById('submit2-button');  
+        
+        const puzzle3Part1Input = document.getElementById('puzzle3-part1-input');  
+        const submit3Part1Button = document.getElementById('submit3-part1-button');  
+        const puzzle3Part2Input = document.getElementById('puzzle3-part2-input');  
+        const submit3Part2Button = document.getElementById('submit3-part2-button');  
+        const toPuzzle4Button = document.getElementById('to-puzzle4-button');  
+        
+        const puzzle4Part1Input = document.getElementById('puzzle4-part1-input');  
+        const submit4Part1Button = document.getElementById('submit4-part1-button');  
+        const puzzle4Part2Input = document.getElementById('puzzle4-part2-input');  
+        const submit4Part2Button = document.getElementById('submit4-part2-button');  
+        const puzzle4Input = document.getElementById('puzzle4-input');  
+        const submit4Button = document.getElementById('submit4-button');  
+        
+        const finalInput = document.getElementById('final-input');  
+        const submitFinalButton = document.getElementById('submit-final-button');  
+        
+        // DOM Elements - Result Displays im finalen Rätsel  
+        const result1Display = document.getElementById('result1-display');  
+        const result2Display = document.getElementById('result2-display');  
+        const result3Display = document.getElementById('result3-display');  
+        const result4Display = document.getElementById('result4-display');  
+        
+        // DOM Elements - Feedback  
+        const feedback1 = document.getElementById('feedback1');  
+        const feedback2Part1 = document.getElementById('feedback2-part1');  
+        const feedback2Part2 = document.getElementById('feedback2-part2');  
+        const feedback2Part3 = document.getElementById('feedback2-part3');  
+        const feedback2Part4 = document.getElementById('feedback2-part4');  
+        const feedback2 = document.getElementById('feedback2');  
+        const feedback3Part1 = document.getElementById('feedback3-part1');  
+        const feedback3Part2 = document.getElementById('feedback3-part2');  
+        const feedback4Part1 = document.getElementById('feedback4-part1');  
+        const feedback4Part2 = document.getElementById('feedback4-part2');  
+        const feedback4 = document.getElementById('feedback4');  
+        const feedbackFinal = document.getElementById('feedback-final');  
+        
+        // DOM Elements - Hint Buttons  
+        const hint1_1Button = document.getElementById('hint1-1-button');  
+        const hint1_2Button = document.getElementById('hint1-2-button');  
+        const hint1_3Button = document.getElementById('hint1-3-button');  
+        const hint2_1Button = document.getElementById('hint2-1-button');  
+        const hint2_2Button = document.getElementById('hint2-2-button');  
+        const hint2_3Button = document.getElementById('hint2-3-button');  
+        const hint2_4Button = document.getElementById('hint2-4-button');  
+        const hint2_5Button = document.getElementById('hint2-5-button');  
+        const hint2_6Button = document.getElementById('hint2-6-button');  
+        const hint2_7Button = document.getElementById('hint2-7-button');  
+        const hint2_8Button = document.getElementById('hint2-8-button');  
+        const hint3_1Button = document.getElementById('hint3-1-button');  
+        const hint3_2Button = document.getElementById('hint3-2-button');  
+        const hint3_3Button = document.getElementById('hint3-3-button');  
+        const hint3_4Button = document.getElementById('hint3-4-button');  
+        const hint3_5Button = document.getElementById('hint3-5-button');  
+        const hint4_1Button = document.getElementById('hint4-1-button');  
+        const hint4_2Button = document.getElementById('hint4-2-button');  
+        const hint4_3Button = document.getElementById('hint4-3-button');  
+        const hint4_4Button = document.getElementById('hint4-4-button');  
+        const hint4_5Button = document.getElementById('hint4-5-button');  
+        const hint4_6Button = document.getElementById('hint4-6-button');  
+        const hintFinalButton = document.getElementById('hint-final-button');  
+        
+        // DOM Elements - Hint Containers  
+        const hint1_1Container = document.getElementById('hint1-1-container');  
+        const hint1_2Container = document.getElementById('hint1-2-container');  
+        const hint1_3Container = document.getElementById('hint1-3-container');  
+        const hint2_1Container = document.getElementById('hint2-1-container');  
+        const hint2_2Container = document.getElementById('hint2-2-container');  
+        const hint2_3Container = document.getElementById('hint2-3-container');  
+        const hint2_4Container = document.getElementById('hint2-4-container');  
+        const hint2_5Container = document.getElementById('hint2-5-container');  
+        const hint2_6Container = document.getElementById('hint2-6-container');  
+        const hint2_7Container = document.getElementById('hint2-7-container');  
+        const hint2_8Container = document.getElementById('hint2-8-container');  
+        const hint3_1Container = document.getElementById('hint3-1-container');  
+        const hint3_2Container = document.getElementById('hint3-2-container');  
+        const hint3_3Container = document.getElementById('hint3-3-container');  
+        const hint3_4Container = document.getElementById('hint3-4-container');  
+        const hint3_5Container = document.getElementById('hint3-5-container');  
+        const hint4_1Container = document.getElementById('hint4-1-container');  
+        const hint4_2Container = document.getElementById('hint4-2-container');  
+        const hint4_3Container = document.getElementById('hint4-3-container');  
+        const hint4_4Container = document.getElementById('hint4-4-container');  
+        const hint4_5Container = document.getElementById('hint4-5-container');  
+        const hint4_6Container = document.getElementById('hint4-6-container');  
+        const hintFinalContainer = document.getElementById('hint-final-container');  
+        
+        // DOM Elements - Restart Buttons  
+        const restartButton = document.getElementById('restart-button');  
+        const restartFailButton = document.getElementById('restart-fail-button');  
+        const timeRemaining = document.getElementById('time-remaining');  
+        
+        // Helper Functions  
+        function formatTime(seconds) {  
+            const mins = Math.floor(seconds / 60);  
+            const secs = seconds % 60;  
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;  
+        }  
+        
+        function updateTimer() {  
+            if (remainingTime <= 0) {  
+                clearInterval(timerInterval);  
+                gameOver(false);  
+                return;  
+            }  
+            
+            remainingTime--;  
+            timer.textContent = formatTime(remainingTime);  
+            introTimer.textContent = formatTime(remainingTime);  
+        }  
+        
+        function showFeedback(element, isCorrect, message) {  
+            element.textContent = message;  
+            element.className = isCorrect ? 'feedback-success' : 'feedback-error';  
+            element.classList.remove('hidden');  
+        }  
+        
+        function applyHintPenalty(hintNumber) {  
+            // Progressive Strafen: 1 Min., 2 Min., 3 Min. usw.  
+            const penalty = hintNumber * 60; // Hinweis 1: 1 Min, Hinweis 2: 2 Min, ...  
+            remainingTime -= penalty;  
+            if (remainingTime < 0) remainingTime = 0;  
+            timer.textContent = formatTime(remainingTime);  
+            introTimer.textContent = formatTime(remainingTime);  
+            hintsUsed++;  
+        }  
+        
+        function disableButton(button) {  
+            button.disabled = true;  
+            button.classList.add('disabled');  
+        }  
+        
+        function updateProgress() {  
+            // Berechne den Fortschritt (0 bis 100%)  
+            let progress = 0;  
+            
+            switch(currentPuzzle) {  
+                case 0: progress = 0; break;     // Intro  
+                case 1: progress = 16; break;    // Rätsel 1  
+                case 2: progress = 32; break;    // Rätsel 2  
+                case 3: progress = 48; break;    // Rätsel 3  
+                case 4: progress = 64; break;    // Rätsel 4  
+                case 5: progress = 80; break;    // Final  
+                case 6: progress = 100; break;   // Ende  
+            }  
+            
+            progressBar.style.width = `${progress}%`;  
+        }
+        function advanceToPuzzle(puzzle) {  
+            currentPuzzle = puzzle;  
+            
+            // Alle Abschnitte ausblenden  
+            introSection.classList.add('hidden');  
+            puzzle1Section.classList.add('hidden');  
+            puzzle2Section.classList.add('hidden');  
+            puzzle3Section.classList.add('hidden');  
+            puzzle4Section.classList.add('hidden');  
+            puzzleFinalSection.classList.add('hidden');  
+            successScreen.classList.add('hidden');  
+            failureScreen.classList.add('hidden');  
+            
+            // Fortschritt aktualisieren  
+            updateProgress();  
+            
+            // Gewünschten Abschnitt einblenden  
+            switch(puzzle) {  
+                case 0:  
+                    introSection.classList.remove('hidden');  
+                    break;  
+                case 1:  
+                    puzzle1Section.classList.remove('hidden');  
+                    break;  
+                case 2:  
+                    puzzle2Section.classList.remove('hidden');  
+                    break;  
+                case 3:  
+                    puzzle3Section.classList.remove('hidden');  
+                    break;  
+                case 4:  
+                    puzzle4Section.classList.remove('hidden');  
+                    break;  
+                case 5:  
+                    // Ergebnisse im finalen Rätsel anzeigen  
+                    result1Display.textContent = SOLUTIONS.puzzle1;  
+                    result2Display.textContent = SOLUTIONS.puzzle2;  
+                    result3Display.textContent = "TEILCHEN + " + SOLUTIONS.puzzle3Part2;  
+                    result4Display.textContent = SOLUTIONS.puzzle4;  
+                    puzzleFinalSection.classList.remove('hidden');  
+                    break;  
+                case 6:  
+                    timeRemaining.textContent = formatTime(remainingTime);  
+                    successScreen.classList.remove('hidden');  
+                    break;  
+            }  
+        }  
+        
+        function gameOver(success) {  
+            // Timer stoppen  
+            clearInterval(timerInterval);  
+            
+            if (success) {  
+                // Erfolgsbildschirm anzeigen  
+                timeRemaining.textContent = formatTime(remainingTime);  
+                advanceToPuzzle(6);  
+            } else {  
+                // Misserfolgsbildschirm anzeigen  
+                failureScreen.classList.remove('hidden');  
+                
+                // Alle anderen Bildschirme ausblenden  
+                introSection.classList.add('hidden');  
+                puzzle1Section.classList.add('hidden');  
+                puzzle2Section.classList.add('hidden');  
+                puzzle3Section.classList.add('hidden');  
+                puzzle4Section.classList.add('hidden');  
+                puzzleFinalSection.classList.add('hidden');  
+                successScreen.classList.add('hidden');  
+            }  
+        }  
+        
+        function resetGame() {  
+            // Zeit zurücksetzen  
+            remainingTime = TOTAL_TIME;  
+            timer.textContent = formatTime(remainingTime);  
+            introTimer.textContent = formatTime(remainingTime);  
+            
+            // Timer stoppen  
+            clearInterval(timerInterval);  
+            
+            // Spielstatus zurücksetzen  
+            currentPuzzle = 0;  
+            hintsUsed = 0;  
+            puzzle2Part1Solved = false;  
+            puzzle2Part2Solved = false;  
+            puzzle2Part3Solved = false;  
+            puzzle2Part4Solved = false;  
+            puzzle3Part1Solved = false;  
+            puzzle3Part2Solved = false;  
+            puzzle4Part1Solved = false;  
+            puzzle4Part2Solved = false;  
+            
+            // Inputs leeren  
+            puzzle1Input.value = '';  
+            puzzle2Part1Input.value = '';  
+            puzzle2Part2Input.value = '';  
+            puzzle2Part3Input.value = '';  
+            puzzle2Part4Input.value = '';  
+            puzzle2Input.value = '';  
+            puzzle3Part1Input.value = '';  
+            puzzle3Part2Input.value = '';  
+            puzzle4Part1Input.value = '';  
+            puzzle4Part2Input.value = '';  
+            puzzle4Input.value = '';  
+            finalInput.value = '';  
+            
+            // Checkboxen zurücksetzen  
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {  
+                checkbox.checked = false;  
+            });  
+            
+            // Feedback verstecken  
+            feedback1.classList.add('hidden');  
+            feedback2Part1.classList.add('hidden');  
+            feedback2Part2.classList.add('hidden');  
+            feedback2Part3.classList.add('hidden');  
+            feedback2Part4.classList.add('hidden');  
+            feedback2.classList.add('hidden');  
+            feedback3Part1.classList.add('hidden');  
+            feedback3Part2.classList.add('hidden');  
+            feedback4Part1.classList.add('hidden');  
+            feedback4Part2.classList.add('hidden');  
+            feedback4.classList.add('hidden');  
+            feedbackFinal.classList.add('hidden');  
+            
+            // Hinweise zurücksetzen  
+            hint1_1Container.classList.add('hidden');  
+            hint1_2Container.classList.add('hidden');  
+            hint1_3Container.classList.add('hidden');  
+            hint2_1Container.classList.add('hidden');  
+            hint2_2Container.classList.add('hidden');  
+            hint2_3Container.classList.add('hidden');  
+            hint2_4Container.classList.add('hidden');  
+            hint2_5Container.classList.add('hidden');  
+            hint2_6Container.classList.add('hidden');  
+            hint2_7Container.classList.add('hidden');  
+            hint2_8Container.classList.add('hidden');  
+            hint3_1Container.classList.add('hidden');  
+            hint3_2Container.classList.add('hidden');  
+            hint3_3Container.classList.add('hidden');  
+            hint3_4Container.classList.add('hidden');  
+            hint3_5Container.classList.add('hidden');  
+            hint4_1Container.classList.add('hidden');  
+            hint4_2Container.classList.add('hidden');  
+            hint4_3Container.classList.add('hidden');  
+            hint4_4Container.classList.add('hidden');  
+            hint4_5Container.classList.add('hidden');  
+            hint4_6Container.classList.add('hidden');  
+            hintFinalContainer.classList.add('hidden');  
+            
+            // Hinweis-Buttons zurücksetzen und aktivieren  
+            hint1_1Button.disabled = false;  
+            hint1_1Button.classList.remove('disabled');  
+            hint1_2Button.disabled = false;  
+            hint1_2Button.classList.remove('disabled');  
+            hint1_3Button.disabled = false;  
+            hint1_3Button.classList.remove('disabled');  
+            hint2_1Button.disabled = false;  
+            hint2_1Button.classList.remove('disabled');  
+            hint2_2Button.disabled = false;  
+            hint2_2Button.classList.remove('disabled');  
+            hint2_3Button.disabled = false;  
+            hint2_3Button.classList.remove('disabled');  
+            hint2_4Button.disabled = false;  
+            hint2_4Button.classList.remove('disabled');  
+            hint2_5Button.disabled = false;  
+            hint2_5Button.classList.remove('disabled');  
+            hint2_6Button.disabled = false;  
+            hint2_6Button.classList.remove('disabled');  
+            hint2_7Button.disabled = false;  
+            hint2_7Button.classList.remove('disabled');  
+            hint2_8Button.disabled = false;  
+            hint2_8Button.classList.remove('disabled');  
+            hint3_1Button.disabled = false;  
+            hint3_1Button.classList.remove('disabled');  
+            hint3_2Button.disabled = false;  
+            hint3_2Button.classList.remove('disabled');  
+            hint3_3Button.disabled = false;  
+            hint3_3Button.classList.remove('disabled');  
+            hint3_4Button.disabled = false;  
+            hint3_4Button.classList.remove('disabled');  
+            hint3_5Button.disabled = false;  
+            hint3_5Button.classList.remove('disabled');  
+            hint4_1Button.disabled = false;  
+            hint4_1Button.classList.remove('disabled');  
+            hint4_2Button.disabled = false;  
+            hint4_2Button.classList.remove('disabled');  
+            hint4_3Button.disabled = false;  
+            hint4_3Button.classList.remove('disabled');  
+            hint4_4Button.disabled = false;  
+            hint4_4Button.classList.remove('disabled');  
+            hint4_5Button.disabled = false;  
+            hint4_5Button.classList.remove('disabled');  
+            hint4_6Button.disabled = false;  
+            hint4_6Button.classList.remove('disabled');  
+            hintFinalButton.disabled = false;  
+            hintFinalButton.classList.remove('disabled');  
+            
+            // Hinweis-Buttons ausblenden außer dem ersten  
+            hint1_2Button.classList.add('hidden');  
+            hint1_3Button.classList.add('hidden');  
+            hint2_2Button.classList.add('hidden');  
+            hint2_4Button.classList.add('hidden');  
+            hint2_6Button.classList.add('hidden');  
+            hint2_8Button.classList.add('hidden');  
+            hint3_2Button.classList.add('hidden');  
+            hint3_3Button.classList.add('hidden');  
+            hint3_5Button.classList.add('hidden');  
+            hint4_2Button.classList.add('hidden');  
+            hint4_3Button.classList.add('hidden');  
+            hint4_5Button.classList.add('hidden');  
+            hint4_6Button.classList.add('hidden');  
+            
+            // Rätselteile zurücksetzen  
+            puzzle2Part2.classList.add('hidden');  
+            puzzle2Part3.classList.add('hidden');  
+            puzzle2Part4.classList.add('hidden');  
+            puzzle2Final.classList.add('hidden');  
+            puzzle3Part2.classList.add('hidden');  
+            puzzle3Final.classList.add('hidden');  
+            puzzle4Part2.classList.add('hidden');  
+            puzzle4Final.classList.add('hidden');  
+            
+            // Timer und Fortschritt ausblenden  
+            timerDisplay.classList.add('hidden');  
+            progressSection.classList.add('hidden');  
+            
+            // Fortschritt zurücksetzen  
+            progressBar.style.width = '0%';  
+            
+            // Startbildschirm anzeigen  
+            advanceToPuzzle(0);  
+        }  
+        
+        // Funktion zur Überprüfung, ob Rätsel 2 Final angezeigt werden soll  
+        function checkPuzzle2FinalAvailability() {  
+            if (puzzle2Part1Solved && puzzle2Part2Solved && puzzle2Part3Solved && puzzle2Part4Solved) {  
+                puzzle2Final.classList.remove('hidden');  
+            }  
+        }  
+        
+        // Funktion zur Überprüfung, ob Rätsel 3 Final angezeigt werden soll  
+        function checkPuzzle3FinalAvailability() {  
+            if (puzzle3Part1Solved && puzzle3Part2Solved) {  
+                puzzle3Final.classList.remove('hidden');  
+            }  
+        }  
+        
+        // Funktion zur Überprüfung, ob Rätsel 4 Final angezeigt werden soll  
+        function checkPuzzle4FinalAvailability() {  
+            if (puzzle4Part1Solved && puzzle4Part2Solved) {  
+                puzzle4Final.classList.remove('hidden');  
+            }  
+        }
+        // Event Listeners  
+        // Start-Button  
+        startButton.addEventListener('click', function() {  
+            // Timer starten  
+            timerInterval = setInterval(updateTimer, 1000);  
+            timerDisplay.classList.remove('hidden');  
+            progressSection.classList.remove('hidden');  
+            
+            // Zum ersten Rätsel wechseln  
+            advanceToPuzzle(1);  
+        });  
+        
+        // Rätsel 1 - Überprüfung  
+        submit1Button.addEventListener('click', function() {  
+            const input = puzzle1Input.value.trim();  
+            if (input === SOLUTIONS.puzzle1) {  
+                showFeedback(feedback1, true, "Richtig! Der Code ist korrekt.");  
+                
+                // Nach 1,5 Sekunden zum nächsten Rätsel weiterleiten  
+                setTimeout(() => {  
+                    advanceToPuzzle(2);  
+                }, 1500);  
+            } else {  
+                showFeedback(feedback1, false, "Leider falsch. Versuche es noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 2, Teil 1 - Überprüfung  
+        submit2Part1Button.addEventListener('click', function() {  
+            const input = puzzle2Part1Input.value.trim();  
+            if (input === SOLUTIONS.puzzle2Part1) {  
+                showFeedback(feedback2Part1, true, "Richtig! Die chronologische Reihenfolge ist korrekt.");  
+                puzzle2Part1Solved = true;  
+                
+                // Teil 2 anzeigen  
+                puzzle2Part2.classList.remove('hidden');  
+                
+                // Prüfen, ob alle Teile gelöst wurden  
+                checkPuzzle2FinalAvailability();  
+            } else {  
+                showFeedback(feedback2Part1, false, "Leider falsch. Versuche es noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 2, Teil 2 - Überprüfung  
+        submit2Part2Button.addEventListener('click', function() {  
+            const input = puzzle2Part2Input.value.trim().toUpperCase();  
+            if (input === SOLUTIONS.puzzle2Part2) {  
+                showFeedback(feedback2Part2, true, "Richtig! Der wissenschaftliche Arbeitsplatz ist korrekt.");  
+                puzzle2Part2Solved = true;  
+                
+                // Teil 3 anzeigen  
+                puzzle2Part3.classList.remove('hidden');  
+                
+                // Prüfen, ob alle Teile gelöst wurden  
+                checkPuzzle2FinalAvailability();  
+            } else {  
+                showFeedback(feedback2Part2, false, "Leider falsch. Versuche es noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 2, Teil 3 - Überprüfung  
+        submit2Part3Button.addEventListener('click', function() {  
+            const input = puzzle2Part3Input.value.trim().toUpperCase();  
+            if (input === SOLUTIONS.puzzle2Part3) {  
+                showFeedback(feedback2Part3, true, "Richtig! Du hast die höchste Temperatur identifiziert.");  
+                puzzle2Part3Solved = true;  
+                
+                // Teil 4 anzeigen  
+                puzzle2Part4.classList.remove('hidden');  
+                
+                // Prüfen, ob alle Teile gelöst wurden  
+                checkPuzzle2FinalAvailability();  
+            } else {  
+                showFeedback(feedback2Part3, false, "Leider falsch. Versuche es noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 2, Teil 4 - Überprüfung  
+        submit2Part4Button.addEventListener('click', function() {  
+            const input = puzzle2Part4Input.value.trim().toUpperCase();  
+            if (input === SOLUTIONS.puzzle2Part4) {  
+                showFeedback(feedback2Part4, true, "Richtig! Das Labormöbel ist korrekt.");  
+                puzzle2Part4Solved = true;  
+                
+                // Prüfen, ob alle Teile gelöst wurden  
+                checkPuzzle2FinalAvailability();  
+            } else {  
+                showFeedback(feedback2Part4, false, "Leider falsch. Versuche es noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 2 - Gesamtlösung  
+        submit2Button.addEventListener('click', function() {  
+            const input = puzzle2Input.value.trim().toUpperCase();  
+            if (input === SOLUTIONS.puzzle2) {  
+                showFeedback(feedback2, true, "Richtig! Du hast die geheime Erfindung entdeckt!");  
+                
+                // Nach 1,5 Sekunden zum nächsten Rätsel weiterleiten  
+                setTimeout(() => {  
+                    advanceToPuzzle(3);  
+                }, 1500);  
+            } else {  
+                showFeedback(feedback2, false, "Leider falsch. Überprüfe die Kombination aus Code und Standort.");  
+            }  
+        });  
+        
+        // Rätsel 3, Teil 1 - Überprüfung  
+        submit3Part1Button.addEventListener('click', function() {  
+            const input = puzzle3Part1Input.value.trim().toUpperCase();  
+            if (input === SOLUTIONS.puzzle3Part1) {  
+                showFeedback(feedback3Part1, true, "Richtig! Du verstehst die kinetische Gastheorie.");  
+                puzzle3Part1Solved = true;  
+                
+                // Teil 2 anzeigen  
+                puzzle3Part2.classList.remove('hidden');  
+                
+                // Prüfen, ob alle Teile gelöst wurden  
+                checkPuzzle3FinalAvailability();  
+            } else {  
+                showFeedback(feedback3Part1, false, "Leider falsch. Überprüfe die Aussagen noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 3, Teil 2 - Überprüfung  
+        submit3Part2Button.addEventListener('click', function() {  
+            const input = puzzle3Part2Input.value.trim().toUpperCase();  
+            if (input === SOLUTIONS.puzzle3Part2) {  
+                showFeedback(feedback3Part2, true, "Richtig! Du hast den fehlenden Begriff identifiziert.");  
+                puzzle3Part2Solved = true;  
+                
+                // Prüfen, ob alle Teile gelöst wurden  
+                checkPuzzle3FinalAvailability();  
+            } else {  
+                showFeedback(feedback3Part2, false, "Leider falsch. Überprüfe deine Antwort noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 3 - Weiter zu Rätsel 4  
+        toPuzzle4Button.addEventListener('click', function() {  
+            advanceToPuzzle(4);  
+        });  
+        
+        // Rätsel 4, Teil 1 - Überprüfung  
+        submit4Part1Button.addEventListener('click', function() {  
+            const input = puzzle4Part1Input.value.trim();  
+            if (input === SOLUTIONS.puzzle4Part1) {  
+                showFeedback(feedback4Part1, true, "Richtig! Du hast die Hauptgruppenelemente korrekt identifiziert.");  
+                puzzle4Part1Solved = true;  
+                
+                // Teil 2 anzeigen  
+                puzzle4Part2.classList.remove('hidden');  
+                
+                // Prüfen, ob alle Teile gelöst wurden  
+                checkPuzzle4FinalAvailability();  
+            } else {  
+                showFeedback(feedback4Part1, false, "Leider falsch. Überprüfe die Elementzuordnung noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 4, Teil 2 - Überprüfung  
+        submit4Part2Button.addEventListener('click', function() {  
+            const input = puzzle4Part2Input.value.trim();  
+            if (input === SOLUTIONS.puzzle4Part2) {  
+                showFeedback(feedback4Part2, true, "Richtig! Du hast die Längenänderung korrekt berechnet.");  
+                puzzle4Part2Solved = true;  
+                
+                // Prüfen, ob alle Teile gelöst wurden  
+                checkPuzzle4FinalAvailability();  
+            } else {  
+                showFeedback(feedback4Part2, false, "Leider falsch. Überprüfe deine Berechnung noch einmal.");  
+            }  
+        });  
+        
+        // Rätsel 4 - Gesamtlösung  
+        submit4Button.addEventListener('click', function() {  
+            const input = puzzle4Input.value.trim();  
+            if (input === SOLUTIONS.puzzle4) {  
+                showFeedback(feedback4, true, "Richtig! Du hast den Wärmeausdehnungscode geknackt!");  
+                
+                // Nach 1,5 Sekunden zum finalen Rätsel weiterleiten  
+                setTimeout(() => {  
+                    advanceToPuzzle(5);  
+                }, 1500);  
+            } else {  
+                showFeedback(feedback4, false, "Leider falsch. Überprüfe die Kombination der beiden Zahlen.");  
+            }  
+        });  
+        
+        // Finales Rätsel - Überprüfung  
+        submitFinalButton.addEventListener('click', function() {  
+            const input = finalInput.value.trim();  
+            if (input === SOLUTIONS.finalPuzzle) {  
+                showFeedback(feedbackFinal, true, "Code akzeptiert! Die Kältekammer wird entriegelt...");  
+                
+                // Nach 2 Sekunden zum Erfolgsbildschirm weiterleiten  
+                setTimeout(() => {  
+                    gameOver(true);  
+                }, 2000);  
+            } else {  
+                showFeedback(feedbackFinal, false, "Falscher Code! Die Entriegelung wurde abgelehnt.");  
+            }  
+        });
+        // Hinweis-Buttons für Rätsel 1  
+        hint1_1Button.addEventListener('click', function() {  
+            hint1_1Container.classList.remove('hidden');  
+            hint1_2Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint1_1Button);  
+        });  
+        
+        hint1_2Button.addEventListener('click', function() {  
+            hint1_2Container.classList.remove('hidden');  
+            hint1_3Button.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint1_2Button);  
+        });  
+        
+        hint1_3Button.addEventListener('click', function() {  
+            hint1_3Container.classList.remove('hidden');  
+            applyHintPenalty(3);  
+            disableButton(hint1_3Button);  
+        });  
+        
+        // Hinweis-Buttons für Rätsel 2  
+        hint2_1Button.addEventListener('click', function() {  
+            hint2_1Container.classList.remove('hidden');  
+            hint2_2Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint2_1Button);  
+        });  
+        
+        hint2_2Button.addEventListener('click', function() {  
+            hint2_2Container.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint2_2Button);  
+        });  
+        
+        hint2_3Button.addEventListener('click', function() {  
+            hint2_3Container.classList.remove('hidden');  
+            hint2_4Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint2_3Button);  
+        });  
+        
+        hint2_4Button.addEventListener('click', function() {  
+            hint2_4Container.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint2_4Button);  
+        });  
+        
+        hint2_5Button.addEventListener('click', function() {  
+            hint2_5Container.classList.remove('hidden');  
+            hint2_6Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint2_5Button);  
+        });  
+        
+        hint2_6Button.addEventListener('click', function() {  
+            hint2_6Container.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint2_6Button);  
+        });  
+        
+        hint2_7Button.addEventListener('click', function() {  
+            hint2_7Container.classList.remove('hidden');  
+            hint2_8Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint2_7Button);  
+        });  
+        
+        hint2_8Button.addEventListener('click', function() {  
+            hint2_8Container.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint2_8Button);  
+        });  
+        
+        // Hinweis-Buttons für Rätsel 3  
+        hint3_1Button.addEventListener('click', function() {  
+            hint3_1Container.classList.remove('hidden');  
+            hint3_2Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint3_1Button);  
+        });  
+        
+        hint3_2Button.addEventListener('click', function() {  
+            hint3_2Container.classList.remove('hidden');  
+            hint3_3Button.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint3_2Button);  
+        });  
+        
+        hint3_3Button.addEventListener('click', function() {  
+            hint3_3Container.classList.remove('hidden');  
+            applyHintPenalty(3);  
+            disableButton(hint3_3Button);  
+        });  
+        
+        hint3_4Button.addEventListener('click', function() {  
+            hint3_4Container.classList.remove('hidden');  
+            hint3_5Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint3_4Button);  
+        });  
+        
+        hint3_5Button.addEventListener('click', function() {  
+            hint3_5Container.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint3_5Button);  
+        });  
+        
+        // Hinweis-Buttons für Rätsel 4  
+        hint4_1Button.addEventListener('click', function() {  
+            hint4_1Container.classList.remove('hidden');  
+            hint4_2Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint4_1Button);  
+        });  
+        
+        hint4_2Button.addEventListener('click', function() {  
+            hint4_2Container.classList.remove('hidden');  
+            hint4_3Button.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint4_2Button);  
+        });  
+        
+        hint4_3Button.addEventListener('click', function() {  
+            hint4_3Container.classList.remove('hidden');  
+            applyHintPenalty(3);  
+            disableButton(hint4_3Button);  
+        });  
+        
+        hint4_4Button.addEventListener('click', function() {  
+            hint4_4Container.classList.remove('hidden');  
+            hint4_5Button.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hint4_4Button);  
+        });  
+        
+        hint4_5Button.addEventListener('click', function() {  
+            hint4_5Container.classList.remove('hidden');  
+            hint4_6Button.classList.remove('hidden');  
+            applyHintPenalty(2);  
+            disableButton(hint4_5Button);  
+        });  
+        
+        hint4_6Button.addEventListener('click', function() {  
+            hint4_6Container.classList.remove('hidden');  
+            applyHintPenalty(3);  
+            disableButton(hint4_6Button);  
+        });  
+        
+        // Hinweis-Button für das Finale Rätsel  
+        hintFinalButton.addEventListener('click', function() {  
+            hintFinalContainer.classList.remove('hidden');  
+            applyHintPenalty(1);  
+            disableButton(hintFinalButton);  
+        });  
+        
+        // Neustart-Buttons  
+        restartButton.addEventListener('click', resetGame);  
+        restartFailButton.addEventListener('click', resetGame);  
+        
+        // Timer initialisieren  
+        timer.textContent = formatTime(remainingTime);  
+        introTimer.textContent = formatTime(remainingTime);  
+        
+        // Input-Event zum Umwandeln in Großbuchstaben für bestimmte Felder  
+        puzzle2Part2Input.addEventListener('input', function() {  
+            this.value = this.value.toUpperCase();  
+        });  
+        
+        puzzle2Part3Input.addEventListener('input', function() {  
+            this.value = this.value.toUpperCase();  
+        });  
+        
+        puzzle2Part4Input.addEventListener('input', function() {  
+            this.value = this.value.toUpperCase();  
+        });  
+        
+        puzzle2Input.addEventListener('input', function() {  
+            this.value = this.value.toUpperCase();  
+        });  
+        
+        puzzle3Part1Input.addEventListener('input', function() {  
+            this.value = this.value.toUpperCase();  
+        });  
+        
+        puzzle3Part2Input.addEventListener('input', function() {  
+            this.value = this.value.toUpperCase();  
+        });  
+    </script>  
+</body>  
+</html>
