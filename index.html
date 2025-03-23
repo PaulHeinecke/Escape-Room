@@ -816,236 +816,654 @@
     </main>  
     
     <script>  
-        // Game Configuration  
-        const TOTAL_TIME = 80 * 60; // 80 minutes in seconds  
-        
-        // Lösungen  
-        const SOLUTIONS = {  
-            puzzle1: "3414", // Lösung für Rätsel 1  
-            puzzle2Part1: "75239", // Lösung für Rätsel 2, Teil 1  
-            puzzle2Part2: "LABOR", // Lösung für Rätsel 2, Teil 2  
-            puzzle2Part3: "H", // Lösung für Rätsel 2, Teil 3  
-            puzzle2Part4: "RANK", // Lösung für Rätsel 2, Teil 4  
-            puzzle2: "75239LABORRANK", // Gesamtlösung für Rätsel 2  
-            puzzle3Part1: "TEILCHEN", // Lösung für Rätsel 3, Teil 1  
-            puzzle3Part2: "RESUBLIMIEREN", // Lösung für Rätsel 3, Teil 2  
-            puzzle4Part1: "22", // Lösung für Rätsel 4, Teil 1  
-            puzzle4Part2: "48", // Lösung für Rätsel 4, Teil 2  
-            puzzle4: "2248", // Gesamtlösung für Rätsel 4  
-            finalPuzzle: "341422" // Lösung für das finale Rätsel (Rätsel 1 + Rätsel 4)  
-        };  
-        
-        // Game State  
-        let remainingTime = TOTAL_TIME;  
-        let timerInterval;  
-        let currentPuzzle = 0; // 0: Intro, 1-5: Rätsel, 6: Success  
-        let hintsUsed = 0;  
-        let puzzle2Part1Solved = false;  
-        let puzzle2Part2Solved = false;  
-        let puzzle2Part3Solved = false;  
-        let puzzle2Part4Solved = false;  
-        let puzzle3Part1Solved = false;  
-        let puzzle3Part2Solved = false;  
-        let puzzle4Part1Solved = false;  
-        let puzzle4Part2Solved = false;  
-        
-        // DOM Elements - Intro und Timer  
-        const startButton = document.getElementById('start-game');  
-        const timerDisplay = document.getElementById('timer-display');  
-        const timer = document.getElementById('timer');  
-        const introTimer = document.getElementById('intro-timer');  
-        const progressSection = document.getElementById('progress-section');  
-        const progressBar = document.getElementById('progress-bar');  
-        
-        // DOM Elements - Sections  
-        const introSection = document.getElementById('intro');  
-        const puzzle1Section = document.getElementById('puzzle1');  
-        const puzzle2Section = document.getElementById('puzzle2');  
-        const puzzle3Section = document.getElementById('puzzle3');  
-        const puzzle4Section = document.getElementById('puzzle4');  
-        const puzzleFinalSection = document.getElementById('puzzle-final');  
-        const successScreen = document.getElementById('success-screen');  
-        const failureScreen = document.getElementById('failure-screen');  
-        
-        // DOM Elements - Puzzle 2 Subsections  
-        const puzzle2Part2 = document.getElementById('puzzle2-part2');  
-        const puzzle2Part3 = document.getElementById('puzzle2-part3');  
-        const puzzle2Part4 = document.getElementById('puzzle2-part4');  
-        const puzzle2Final = document.getElementById('puzzle2-final');  
-        
-        // DOM Elements - Puzzle 3 Subsections  
-        const puzzle3Part2 = document.getElementById('puzzle3-part2');  
-        const puzzle3Final = document.getElementById('puzzle3-final');  
-        
-        // DOM Elements - Puzzle 4 Subsections  
-        const puzzle4Part2 = document.getElementById('puzzle4-part2');  
-        const puzzle4Final = document.getElementById('puzzle4-final');  
-        
-        // DOM Elements - Inputs und Buttons  
-        const puzzle1Input = document.getElementById('puzzle1-input');  
-        const submit1Button = document.getElementById('submit1-button');  
-        
-        const puzzle2Part1Input = document.getElementById('puzzle2-part1-input');  
-        const submit2Part1Button = document.getElementById('submit2-part1-button');  
-        const puzzle2Part2Input = document.getElementById('puzzle2-part2-input');  
-        const submit2Part2Button = document.getElementById('submit2-part2-button');  
-        const puzzle2Part3Input = document.getElementById('puzzle2-part3-input');  
-        const submit2Part3Button = document.getElementById('submit2-part3-button');  
-        const puzzle2Part4Input = document.getElementById('puzzle2-part4-input');  
-        const submit2Part4Button = document.getElementById('submit2-part4-button');  
-        const puzzle2Input = document.getElementById('puzzle2-input');  
-        const submit2Button = document.getElementById('submit2-button');  
-        
-        const puzzle3Part1Input = document.getElementById('puzzle3-part1-input');  
-        const submit3Part1Button = document.getElementById('submit3-part1-button');  
-        const puzzle3Part2Input = document.getElementById('puzzle3-part2-input');  
-        const submit3Part2Button = document.getElementById('submit3-part2-button');  
-        const toPuzzle4Button = document.getElementById('to-puzzle4-button');  
-        
-        const puzzle4Part1Input = document.getElementById('puzzle4-part1-input');  
-        const submit4Part1Button = document.getElementById('submit4-part1-button');  
-        const puzzle4Part2Input = document.getElementById('puzzle4-part2-input');  
-        const submit4Part2Button = document.getElementById('submit4-part2-button');  
-        const puzzle4Input = document.getElementById('puzzle4-input');  
-        const submit4Button = document.getElementById('submit4-button');  
-        
-        const finalInput = document.getElementById('final-input');  
-        const submitFinalButton = document.getElementById('submit-final-button');  
-        
-        // DOM Elements - Result Displays im finalen Rätsel  
-        const result1Display = document.getElementById('result1-display');  
-        const result2Display = document.getElementById('result2-display');  
-        const result3Display = document.getElementById('result3-display');  
-        const result4Display = document.getElementById('result4-display');  
-        
-        // DOM Elements - Feedback  
-        const feedback1 = document.getElementById('feedback1');  
-        const feedback2Part1 = document.getElementById('feedback2-part1');  
-        const feedback2Part2 = document.getElementById('feedback2-part2');  
-        const feedback2Part3 = document.getElementById('feedback2-part3');  
-        const feedback2Part4 = document.getElementById('feedback2-part4');  
-        const feedback2 = document.getElementById('feedback2');  
-        const feedback3Part1 = document.getElementById('feedback3-part1');  
-        const feedback3Part2 = document.getElementById('feedback3-part2');  
-        const feedback4Part1 = document.getElementById('feedback4-part1');  
-        const feedback4Part2 = document.getElementById('feedback4-part2');  
-        const feedback4 = document.getElementById('feedback4');  
-        const feedbackFinal = document.getElementById('feedback-final');  
-        
-        // DOM Elements - Hint Buttons  
-        const hint1_1Button = document.getElementById('hint1-1-button');  
-        const hint1_2Button = document.getElementById('hint1-2-button');  
-        const hint1_3Button = document.getElementById('hint1-3-button');  
-        const hint2_1Button = document.getElementById('hint2-1-button');  
-        const hint2_2Button = document.getElementById('hint2-2-button');  
-        const hint2_3Button = document.getElementById('hint2-3-button');  
-        const hint2_4Button = document.getElementById('hint2-4-button');  
-        const hint2_5Button = document.getElementById('hint2-5-button');  
-        const hint2_6Button = document.getElementById('hint2-6-button');  
-        const hint2_7Button = document.getElementById('hint2-7-button');  
-        const hint2_8Button = document.getElementById('hint2-8-button');  
-        const hint3_1Button = document.getElementById('hint3-1-button');  
-        const hint3_2Button = document.getElementById('hint3-2-button');  
-        const hint3_3Button = document.getElementById('hint3-3-button');  
-        const hint3_4Button = document.getElementById('hint3-4-button');  
-        const hint3_5Button = document.getElementById('hint3-5-button');  
-        const hint4_1Button = document.getElementById('hint4-1-button');  
-        const hint4_2Button = document.getElementById('hint4-2-button');  
-        const hint4_3Button = document.getElementById('hint4-3-button');  
-        const hint4_4Button = document.getElementById('hint4-4-button');  
-        const hint4_5Button = document.getElementById('hint4-5-button');  
-        const hint4_6Button = document.getElementById('hint4-6-button');  
-        const hintFinalButton = document.getElementById('hint-final-button');  
-        
-        // DOM Elements - Hint Containers  
-        const hint1_1Container = document.getElementById('hint1-1-container');  
-        const hint1_2Container = document.getElementById('hint1-2-container');  
-        const hint1_3Container = document.getElementById('hint1-3-container');  
-        const hint2_1Container = document.getElementById('hint2-1-container');  
-        const hint2_2Container = document.getElementById('hint2-2-container');  
-        const hint2_3Container = document.getElementById('hint2-3-container');  
-        const hint2_4Container = document.getElementById('hint2-4-container');  
-        const hint2_5Container = document.getElementById('hint2-5-container');  
-        const hint2_6Container = document.getElementById('hint2-6-container');  
-        const hint2_7Container = document.getElementById('hint2-7-container');  
-        const hint2_8Container = document.getElementById('hint2-8-container');  
-        const hint3_1Container = document.getElementById('hint3-1-container');  
-        const hint3_2Container = document.getElementById('hint3-2-container');  
-        const hint3_3Container = document.getElementById('hint3-3-container');  
-        const hint3_4Container = document.getElementById('hint3-4-container');  
-        const hint3_5Container = document.getElementById('hint3-5-container');  
-        const hint4_1Container = document.getElementById('hint4-1-container');  
-        const hint4_2Container = document.getElementById('hint4-2-container');  
-        const hint4_3Container = document.getElementById('hint4-3-container');  
-        const hint4_4Container = document.getElementById('hint4-4-container');  
-        const hint4_5Container = document.getElementById('hint4-5-container');  
-        const hint4_6Container = document.getElementById('hint4-6-container');  
-        const hintFinalContainer = document.getElementById('hint-final-container');  
-        
-        // DOM Elements - Restart Buttons  
-        const restartButton = document.getElementById('restart-button');  
-        const restartFailButton = document.getElementById('restart-fail-button');  
-        const timeRemaining = document.getElementById('time-remaining');  
-        
-        // Helper Functions  
-        function formatTime(seconds) {  
-            const mins = Math.floor(seconds / 60);  
-            const secs = seconds % 60;  
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;  
+      // Game Configuration  
+const TOTAL_TIME = 80 * 60; // 80 minutes in seconds  
+
+// Lösungen  
+const SOLUTIONS = {  
+    puzzle1: "3414", // Lösung für Rätsel 1  
+    puzzle2Part1: "75239", // Lösung für Rätsel 2, Teil 1  
+    puzzle2Part2: "LABOR", // Lösung für Rätsel 2, Teil 2  
+    puzzle2Part3: "H", // Lösung für Rätsel 2, Teil 3  
+    puzzle2Part4: "RANK", // Lösung für Rätsel 2, Teil 4  
+    puzzle2: "75239LABORRANK", // Gesamtlösung für Rätsel 2  
+    puzzle3Part1: "TEILCHEN", // Lösung für Rätsel 3, Teil 1  
+    puzzle3Part2: "RESUBLIMIEREN", // Lösung für Rätsel 3, Teil 2  
+    puzzle4Part1: "22", // Lösung für Rätsel 4, Teil 1  
+    puzzle4Part2: "48", // Lösung für Rätsel 4, Teil 2  
+    puzzle4: "2248", // Gesamtlösung für Rätsel 4  
+    finalPuzzle: "341422" // Lösung für das finale Rätsel (Rätsel 1 + Rätsel 4)  
+};  
+
+// Game State  
+let remainingTime = TOTAL_TIME;  
+let timerInterval;  
+let currentPuzzle = 0; // 0: Intro, 1-5: Rätsel, 6: Success  
+let hintsUsed = 0;  
+let puzzle2Part1Solved = false;  
+let puzzle2Part2Solved = false;  
+let puzzle2Part3Solved = false;  
+let puzzle2Part4Solved = false;  
+let puzzle3Part1Solved = false;  
+let puzzle3Part2Solved = false;  
+let puzzle4Part1Solved = false;  
+let puzzle4Part2Solved = false;  
+
+// Helper Functions  
+function formatTime(seconds) {  
+    const mins = Math.floor(seconds / 60);  
+    const secs = seconds % 60;  
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;  
+}  
+
+function updateTimer() {  
+    if (remainingTime <= 0) {  
+        clearInterval(timerInterval);  
+        gameOver(false);  
+        return;  
+    }  
+    
+    remainingTime--;  
+    timer.textContent = formatTime(remainingTime);  
+    introTimer.textContent = formatTime(remainingTime);  
+}  
+
+function showFeedback(element, isCorrect, message) {  
+    element.textContent = message;  
+    element.className = isCorrect ? 'feedback-success' : 'feedback-error';  
+    element.classList.remove('hidden');  
+}  
+
+function applyHintPenalty(hintNumber) {  
+    // Progressive Strafen: 1 Min., 2 Min., 3 Min. usw.  
+    const penalty = hintNumber * 60; // Hinweis 1: 1 Min, Hinweis 2: 2 Min, ...  
+    remainingTime -= penalty;  
+    if (remainingTime < 0) remainingTime = 0;  
+    timer.textContent = formatTime(remainingTime);  
+    introTimer.textContent = formatTime(remainingTime);  
+    hintsUsed++;  
+}  
+
+function disableButton(button) {  
+    button.disabled = true;  
+    button.classList.add('disabled');  
+}  
+
+function updateProgress() {  
+    // Berechne den Fortschritt (0 bis 100%)  
+    let progress = 0;  
+    
+    switch(currentPuzzle) {  
+        case 0: progress = 0; break;     // Intro  
+        case 1: progress = 16; break;    // Rätsel 1  
+        case 2: progress = 32; break;    // Rätsel 2  
+        case 3: progress = 48; break;    // Rätsel 3  
+        case 4: progress = 64; break;    // Rätsel 4  
+        case 5: progress = 80; break;    // Final  
+        case 6: progress = 100; break;   // Ende  
+    }  
+    
+    progressBar.style.width = `${progress}%`;  
+}  
+
+function advanceToPuzzle(puzzle) {  
+    currentPuzzle = puzzle;  
+    
+    // Alle Abschnitte ausblenden  
+    introSection.classList.add('hidden');  
+    puzzle1Section.classList.add('hidden');  
+    puzzle2Section.classList.add('hidden');  
+    puzzle3Section.classList.add('hidden');  
+    puzzle4Section.classList.add('hidden');  
+    puzzleFinalSection.classList.add('hidden');  
+    successScreen.classList.add('hidden');  
+    failureScreen.classList.add('hidden');  
+    
+    // Fortschritt aktualisieren  
+    updateProgress();  
+    
+    // Gewünschten Abschnitt einblenden  
+    switch(puzzle) {  
+        case 0:  
+            introSection.classList.remove('hidden');  
+            break;  
+        case 1:  
+            puzzle1Section.classList.remove('hidden');  
+            break;  
+        case 2:  
+            puzzle2Section.classList.remove('hidden');  
+            break;  
+        case 3:  
+            puzzle3Section.classList.remove('hidden');  
+            break;  
+        case 4:  
+            puzzle4Section.classList.remove('hidden');  
+            break;  
+        case 5:  
+            // Ergebnisse im finalen Rätsel aktualisieren  
+            result1Display.textContent = SOLUTIONS.puzzle1;  
+            result2Display.textContent = SOLUTIONS.puzzle2;  
+            result3Display.textContent = `${SOLUTIONS.puzzle3Part1} + ${SOLUTIONS.puzzle3Part2}`;  
+            result4Display.textContent = SOLUTIONS.puzzle4;  
+            puzzleFinalSection.classList.remove('hidden');  
+            break;  
+        case 6:  
+            timeRemaining.textContent = formatTime(remainingTime);  
+            successScreen.classList.remove('hidden');  
+            break;  
+    }  
+}  
+
+function gameOver(success) {  
+    // Timer stoppen  
+    clearInterval(timerInterval);  
+    
+    if (success) {  
+        // Erfolgsbildschirm anzeigen  
+        timeRemaining.textContent = formatTime(remainingTime);  
+        advanceToPuzzle(6);  
+    } else {  
+        // Misserfolgsbildschirm anzeigen  
+        introSection.classList.add('hidden');  
+        puzzle1Section.classList.add('hidden');  
+        puzzle2Section.classList.add('hidden');  
+        puzzle3Section.classList.add('hidden');  
+        puzzle4Section.classList.add('hidden');  
+        puzzleFinalSection.classList.add('hidden');  
+        failureScreen.classList.remove('hidden');  
+    }  
+}  
+
+// Funktion zur Überprüfung, ob Rätsel 2 Final angezeigt werden soll  
+function checkPuzzle2FinalAvailability() {  
+    if (puzzle2Part1Solved && puzzle2Part2Solved && puzzle2Part3Solved && puzzle2Part4Solved) {  
+        puzzle2Final.classList.remove('hidden');  
+    }  
+}  
+
+// Funktion zur Überprüfung, ob Rätsel 3 Final angezeigt werden soll  
+function checkPuzzle3FinalAvailability() {  
+    if (puzzle3Part1Solved && puzzle3Part2Solved) {  
+        puzzle3Final.classList.remove('hidden');  
+    }  
+}  
+
+// Funktion zur Überprüfung, ob Rätsel 4 Final angezeigt werden soll  
+function checkPuzzle4FinalAvailability() {  
+    if (puzzle4Part1Solved && puzzle4Part2Solved) {  
+        puzzle4Final.classList.remove('hidden');  
+    }  
+}  
+
+function resetGame() {  
+    // Zeit zurücksetzen  
+    remainingTime = TOTAL_TIME;  
+    timer.textContent = formatTime(remainingTime);  
+    introTimer.textContent = formatTime(remainingTime);  
+    
+    // Timer stoppen  
+    clearInterval(timerInterval);  
+    
+    // Spielstatus zurücksetzen  
+    currentPuzzle = 0;  
+    hintsUsed = 0;  
+    puzzle2Part1Solved = false;  
+    puzzle2Part2Solved = false;  
+    puzzle2Part3Solved = false;  
+    puzzle2Part4Solved = false;  
+    puzzle3Part1Solved = false;  
+    puzzle3Part2Solved = false;  
+    puzzle4Part1Solved = false;  
+    puzzle4Part2Solved = false;  
+    
+    // Inputs leeren  
+    puzzle1Input.value = '';  
+    puzzle2Part1Input.value = '';  
+    puzzle2Part2Input.value = '';  
+    puzzle2Part3Input.value = '';  
+    puzzle2Part4Input.value = '';  
+    puzzle2Input.value = '';  
+    puzzle3Part1Input.value = '';  
+    puzzle3Part2Input.value = '';  
+    puzzle4Part1Input.value = '';  
+    puzzle4Part2Input.value = '';  
+    puzzle4Input.value = '';  
+    finalInput.value = '';  
+    
+    // Checkboxen zurücksetzen  
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {  
+        checkbox.checked = false;  
+    });  
+    
+    // Alle Feedback-Elemente verstecken  
+    document.querySelectorAll('[id^="feedback"]').forEach(feedback => {  
+        feedback.classList.add('hidden');  
+    });  
+    
+    // Alle Hint-Container verstecken  
+    document.querySelectorAll('[id$="-container"]').forEach(container => {  
+        if (container.id.includes("hint")) {  
+            container.classList.add('hidden');  
         }  
-        
-        function updateTimer() {  
-            if (remainingTime <= 0) {  
-                clearInterval(timerInterval);  
-                gameOver(false);  
-                return;  
-            }  
-            
-            remainingTime--;  
-            timer.textContent = formatTime(remainingTime);  
-            introTimer.textContent = formatTime(remainingTime);  
+    });  
+    
+    // Alle Hint-Buttons zurücksetzen  
+    document.querySelectorAll('button[id^="hint"]').forEach(button => {  
+        button.disabled = false;  
+        button.classList.remove('disabled');  
+        if (button.id.endsWith("-1-button") || button.id === "hint-final-button") {  
+            button.classList.remove('hidden');  
+        } else {  
+            button.classList.add('hidden');  
         }  
+    });  
+    
+    // Alle versteckten Rätselteile zurücksetzen  
+    puzzle2Part2.classList.add('hidden');  
+    puzzle2Part3.classList.add('hidden');  
+    puzzle2Part4.classList.add('hidden');  
+    puzzle2Final.classList.add('hidden');  
+    puzzle3Part2.classList.add('hidden');  
+    puzzle3Final.classList.add('hidden');  
+    puzzle4Part2.classList.add('hidden');  
+    puzzle4Final.classList.add('hidden');  
+    
+    // Timer ausblenden  
+    timerDisplay.classList.add('hidden');  
+    progressSection.classList.add('hidden');  
+    
+    // Fortschritt zurücksetzen  
+    progressBar.style.width = '0%';  
+    
+    // Startbildschirm anzeigen  
+    advanceToPuzzle(0);  
+}  
+
+// Event Listeners  
+// Start-Button  
+startButton.addEventListener('click', function() {  
+    // Timer starten  
+    timerInterval = setInterval(updateTimer, 1000);  
+    timerDisplay.classList.remove('hidden');  
+    progressSection.classList.remove('hidden');  
+    
+    // Zum ersten Rätsel wechseln  
+    advanceToPuzzle(1);  
+});  
+
+// Rätsel 1 - Überprüfung  
+submit1Button.addEventListener('click', function() {  
+    const input = puzzle1Input.value.trim();  
+    if (input === SOLUTIONS.puzzle1) {  
+        showFeedback(feedback1, true, "Richtig! Der Code ist korrekt.");  
         
-        function showFeedback(element, isCorrect, message) {  
-            element.textContent = message;  
-            element.className = isCorrect ? 'feedback-success' : 'feedback-error';  
-            element.classList.remove('hidden');  
-        }  
+        // Nach 1,5 Sekunden zum nächsten Rätsel weiterleiten  
+        setTimeout(() => {  
+            advanceToPuzzle(2);  
+        }, 1500);  
+    } else {  
+        showFeedback(feedback1, false, "Leider falsch. Versuche es noch einmal.");  
+    }  
+});  
+
+// Rätsel 2, Teil 1 - Überprüfung  
+submit2Part1Button.addEventListener('click', function() {  
+    const input = puzzle2Part1Input.value.trim();  
+    if (input === SOLUTIONS.puzzle2Part1) {  
+        showFeedback(feedback2Part1, true, "Richtig! Die chronologische Reihenfolge ist korrekt.");  
+        puzzle2Part1Solved = true;  
         
-        function applyHintPenalty(hintNumber) {  
-            // Progressive Strafen: 1 Min., 2 Min., 3 Min. usw.  
-            const penalty = hintNumber * 60; // Hinweis 1: 1 Min, Hinweis 2: 2 Min, ...  
-            remainingTime -= penalty;  
-            if (remainingTime < 0) remainingTime = 0;  
-            timer.textContent = formatTime(remainingTime);  
-            introTimer.textContent = formatTime(remainingTime);  
-            hintsUsed++;  
-        }  
+        // Teil 2 anzeigen  
+        puzzle2Part2.classList.remove('hidden');  
         
-        function disableButton(button) {  
-            button.disabled = true;  
-            button.classList.add('disabled');  
-        }  
+        // Prüfen, ob alle Teile gelöst wurden  
+        checkPuzzle2FinalAvailability();  
+    } else {  
+        showFeedback(feedback2Part1, false, "Leider falsch. Versuche es noch einmal.");  
+    }  
+});  
+
+// Rätsel 2, Teil 2 - Überprüfung  
+submit2Part2Button.addEventListener('click', function() {  
+    const input = puzzle2Part2Input.value.trim().toUpperCase();  
+    if (input === SOLUTIONS.puzzle2Part2) {  
+        showFeedback(feedback2Part2, true, "Richtig! Der wissenschaftliche Arbeitsplatz ist korrekt.");  
+        puzzle2Part2Solved = true;  
         
-        function updateProgress() {  
-            // Berechne den Fortschritt (0 bis 100%)  
-            let progress = 0;  
-            
-            switch(currentPuzzle) {  
-                case 0: progress = 0; break;     // Intro  
-                case 1: progress = 16; break;    // Rätsel 1  
-                case 2: progress = 32; break;    // Rätsel 2  
-                case 3: progress = 48; break;    // Rätsel 3  
-                case 4: progress = 64; break;    // Rätsel 4  
-                case 5: progress = 80; break;    // Final  
-                case 6: progress = 100; break;   // Ende  
-            }  
-            
-            progressBar.style.width = `${progress}%`;  
-        }  
+        // Teil 3 anzeigen  
+        puzzle2Part3.classList.remove('hidden');  
         
-        function advanceToPuzzle(puzzle) {  
-            currentPuzzle = puzzle;  
-            
-            // Alle Abschnitte ausblenden  
-            introSection
+        // Prüfen, ob alle Teile gelöst wurden  
+        checkPuzzle2FinalAvailability();  
+    } else {  
+        showFeedback(feedback2Part2, false, "Leider falsch. Versuche es noch einmal.");  
+    }  
+});  
+
+// Rätsel 2, Teil 3 - Überprüfung  
+submit2Part3Button.addEventListener('click', function() {  
+    const input = puzzle2Part3Input.value.trim().toUpperCase();  
+    if (input === SOLUTIONS.puzzle2Part3) {  
+        showFeedback(feedback2Part3, true, "Richtig! Du hast die höchste Temperatur identifiziert.");  
+        puzzle2Part3Solved = true;  
+        
+        // Teil 4 anzeigen  
+        puzzle2Part4.classList.remove('hidden');  
+        
+        // Prüfen, ob alle Teile gelöst wurden  
+        checkPuzzle2FinalAvailability();  
+    } else {  
+        showFeedback(feedback2Part3, false, "Leider falsch. Versuche es noch einmal.");  
+    }  
+});  
+
+// Rätsel 2, Teil 4 - Überprüfung  
+submit2Part4Button.addEventListener('click', function() {  
+    const input = puzzle2Part4Input.value.trim().toUpperCase();  
+    if (input === SOLUTIONS.puzzle2Part4) {  
+        showFeedback(feedback2Part4, true, "Richtig! Das Labormöbel ist korrekt.");  
+        puzzle2Part4Solved = true;  
+        
+        // Prüfen, ob alle Teile gelöst wurden  
+        checkPuzzle2FinalAvailability();  
+    } else {  
+        showFeedback(feedback2Part4, false, "Leider falsch. Versuche es noch einmal.");  
+    }  
+});  
+
+// Rätsel 2 - Gesamtlösung  
+submit2Button.addEventListener('click', function() {  
+    const input = puzzle2Input.value.trim().toUpperCase();  
+    if (input === SOLUTIONS.puzzle2) {  
+        showFeedback(feedback2, true, "Richtig! Du hast die geheime Erfindung gefunden!");  
+        
+        // Nach 1,5 Sekunden zum nächsten Rätsel weiterleiten  
+        setTimeout(() => {  
+            advanceToPuzzle(3);  
+        }, 1500);  
+    } else {  
+        showFeedback(feedback2, false, "Leider falsch. Überprüfe alle Teillösungen.");  
+    }  
+});  
+
+// Rätsel 3, Teil 1 - Überprüfung  
+submit3Part1Button.addEventListener('click', function() {  
+    const input = puzzle3Part1Input.value.trim().toUpperCase();  
+    if (input === SOLUTIONS.puzzle3Part1) {  
+        showFeedback(feedback3Part1, true, "Richtig! Du hast die kinetische Gastheorie verstanden.");  
+        puzzle3Part1Solved = true;  
+        
+        // Teil 2 anzeigen  
+        puzzle3Part2.classList.remove('hidden');  
+        
+        // Prüfen, ob alle Teile gelöst wurden  
+        checkPuzzle3FinalAvailability();  
+    } else {  
+        showFeedback(feedback3Part1, false, "Leider falsch. Überprüfe deine Antwort.");  
+    }  
+});  
+
+// Rätsel 3, Teil 2 - Überprüfung  
+submit3Part2Button.addEventListener('click', function() {  
+    const input = puzzle3Part2Input.value.trim().toUpperCase();  
+    if (input === SOLUTIONS.puzzle3Part2) {  
+        showFeedback(feedback3Part2, true, "Richtig! Du hast den fehlenden Begriff gefunden.");  
+        puzzle3Part2Solved = true;  
+        
+        // Prüfen, ob alle Teile gelöst wurden  
+        checkPuzzle3FinalAvailability();  
+    } else {  
+        showFeedback(feedback3Part2, false, "Leider falsch. Versuche es noch einmal.");  
+    }  
+});  
+
+// Weiter zu Rätsel 4 Button  
+toPuzzle4Button.addEventListener('click', function() {  
+    advanceToPuzzle(4);  
+});  
+
+// Rätsel 4, Teil 1 - Überprüfung  
+submit4Part1Button.addEventListener('click', function() {  
+    const input = puzzle4Part1Input.value.trim();  
+    if (input === SOLUTIONS.puzzle4Part1) {  
+        showFeedback(feedback4Part1, true, "Richtig! Du hast die Hauptgruppenelemente korrekt identifiziert.");  
+        puzzle4Part1Solved = true;  
+        
+        // Teil 2 anzeigen  
+        puzzle4Part2.classList.remove('hidden');  
+        
+        // Prüfen, ob alle Teile gelöst wurden  
+        checkPuzzle4FinalAvailability();  
+    } else {  
+        showFeedback(feedback4Part1, false, "Leider falsch. Versuche es noch einmal.");  
+    }  
+});  
+
+// Rätsel 4, Teil 2 - Überprüfung  
+submit4Part2Button.addEventListener('click', function() {  
+    const input = puzzle4Part2Input.value.trim();  
+    if (input === SOLUTIONS.puzzle4Part2) {  
+        showFeedback(feedback4Part2, true, "Richtig! Du hast die Längenausdehnung korrekt berechnet.");  
+        puzzle4Part2Solved = true;  
+        
+        // Prüfen, ob alle Teile gelöst wurden  
+        checkPuzzle4FinalAvailability();  
+    } else {  
+        showFeedback(feedback4Part2, false, "Leider falsch. Versuche es noch einmal.");  
+    }  
+});  
+
+// Rätsel 4 - Gesamtcode  
+submit4Button.addEventListener('click', function() {  
+    const input = puzzle4Input.value.trim();  
+    if (input === SOLUTIONS.puzzle4) {  
+        showFeedback(feedback4, true, "Richtig! Du hast den Wärmeausdehnungscode entschlüsselt.");  
+        
+        // Nach 1,5 Sekunden zum finalen Rätsel weiterleiten  
+        setTimeout(() => {  
+            advanceToPuzzle(5);  
+        }, 1500);  
+    } else {  
+        showFeedback(feedback4, false, "Leider falsch. Überprüfe deine Antwort.");  
+    }  
+});  
+
+// Finales Rätsel - Überprüfung  
+submitFinalButton.addEventListener('click', function() {  
+    const input = finalInput.value.trim();  
+    if (input === SOLUTIONS.finalPuzzle) {  
+        showFeedback(feedbackFinal, true, "Richtig! Du hast Professor Wärmer befreit!");  
+        
+        // Nach 1,5 Sekunden zum Erfolgsbildschirm weiterleiten  
+        setTimeout(() => {  
+            gameOver(true);  
+        }, 1500);  
+    } else {  
+        showFeedback(feedbackFinal, false, "Leider falsch. Überprüfe den finalen Code.");  
+    }  
+});  
+
+// Hinweis-Buttons und deren Eventhandler  
+hint1_1Button.addEventListener('click', function() {  
+    hint1_1Container.classList.remove('hidden');  
+    hint1_2Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint1_1Button);  
+});  
+
+hint1_2Button.addEventListener('click', function() {  
+    hint1_2Container.classList.remove('hidden');  
+    hint1_3Button.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint1_2Button);  
+});  
+
+hint1_3Button.addEventListener('click', function() {  
+    hint1_3Container.classList.remove('hidden');  
+    applyHintPenalty(3);  
+    disableButton(hint1_3Button);  
+});  
+
+hint2_1Button.addEventListener('click', function() {  
+    hint2_1Container.classList.remove('hidden');  
+    hint2_2Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint2_1Button);  
+});  
+
+hint2_2Button.addEventListener('click', function() {  
+    hint2_2Container.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint2_2Button);  
+});  
+
+hint2_3Button.addEventListener('click', function() {  
+    hint2_3Container.classList.remove('hidden');  
+    hint2_4Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint2_3Button);  
+});  
+
+hint2_4Button.addEventListener('click', function() {  
+    hint2_4Container.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint2_4Button);  
+});  
+
+hint2_5Button.addEventListener('click', function() {  
+    hint2_5Container.classList.remove('hidden');  
+    hint2_6Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint2_5Button);  
+});  
+
+hint2_6Button.addEventListener('click', function() {  
+    hint2_6Container.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint2_6Button);  
+});  
+
+hint2_7Button.addEventListener('click', function() {  
+    hint2_7Container.classList.remove('hidden');  
+    hint2_8Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint2_7Button);  
+});  
+
+hint2_8Button.addEventListener('click', function() {  
+    hint2_8Container.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint2_8Button);  
+});  
+
+hint3_1Button.addEventListener('click', function() {  
+    hint3_1Container.classList.remove('hidden');  
+    hint3_2Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint3_1Button);  
+});  
+
+hint3_2Button.addEventListener('click', function() {  
+    hint3_2Container.classList.remove('hidden');  
+    hint3_3Button.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint3_2Button);  
+});  
+
+hint3_3Button.addEventListener('click', function() {  
+    hint3_3Container.classList.remove('hidden');  
+    applyHintPenalty(3);  
+    disableButton(hint3_3Button);  
+});  
+
+hint3_4Button.addEventListener('click', function() {  
+    hint3_4Container.classList.remove('hidden');  
+    hint3_5Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint3_4Button);  
+});  
+
+hint3_5Button.addEventListener('click', function() {  
+    hint3_5Container.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint3_5Button);  
+});  
+
+hint4_1Button.addEventListener('click', function() {  
+    hint4_1Container.classList.remove('hidden');  
+    hint4_2Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint4_1Button);  
+});  
+
+hint4_2Button.addEventListener('click', function() {  
+    hint4_2Container.classList.remove('hidden');  
+    hint4_3Button.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint4_2Button);  
+});  
+
+hint4_3Button.addEventListener('click', function() {  
+    hint4_3Container.classList.remove('hidden');  
+    applyHintPenalty(3);  
+    disableButton(hint4_3Button);  
+});  
+
+hint4_4Button.addEventListener('click', function() {  
+    hint4_4Container.classList.remove('hidden');  
+    hint4_5Button.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hint4_4Button);  
+});  
+
+hint4_5Button.addEventListener('click', function() {  
+    hint4_5Container.classList.remove('hidden');  
+    hint4_6Button.classList.remove('hidden');  
+    applyHintPenalty(2);  
+    disableButton(hint4_5Button);  
+});  
+
+hint4_6Button.addEventListener('click', function() {  
+    hint4_6Container.classList.remove('hidden');  
+    applyHintPenalty(3);  
+    disableButton(hint4_6Button);  
+});  
+
+hintFinalButton.addEventListener('click', function() {  
+    hintFinalContainer.classList.remove('hidden');  
+    applyHintPenalty(1);  
+    disableButton(hintFinalButton);  
+});  
+
+// Neustart-Buttons  
+restartButton.addEventListener('click', resetGame);  
+restartFailButton.addEventListener('click', resetGame);  
+
+// Input-Event zum Umwandeln in Großbuchstaben für bestimmte Felder  
+puzzle2Part2Input.addEventListener('input', function() {  
+    this.value = this.value.toUpperCase();  
+});  
+
+puzzle2Part3Input.addEventListener('input', function() {  
+    this.value = this.value.toUpperCase();  
+});  
+
+puzzle2Part4Input.addEventListener('input', function() {  
+    this.value = this.value.toUpperCase();  
+});  
+
+puzzle2Input.addEventListener('input', function() {  
+    this.value = this.value.toUpperCase();  
+});  
+
+puzzle3Part1Input.addEventListener('input', function() {  
+    this.value = this.value.toUpperCase();  
+});  
+
+puzzle3Part2Input.addEventListener('input', function() {  
+    this.value = this.value.toUpperCase();  
+});  
+
+// Timer initialisieren  
+timer.textContent = formatTime(remainingTime);  
+introTimer.textContent = formatTime(remainingTime);
